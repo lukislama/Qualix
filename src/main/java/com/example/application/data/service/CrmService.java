@@ -31,7 +31,8 @@ public class CrmService
         if (stringFilter == null || stringFilter.isEmpty())
         {
             return contactRepository.findAll();
-        } else
+        }
+        else
         {
             return contactRepository.search(stringFilter);
         }

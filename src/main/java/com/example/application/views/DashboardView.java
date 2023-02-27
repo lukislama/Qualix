@@ -14,7 +14,7 @@ import javax.annotation.security.PermitAll;
 @PermitAll
 public class DashboardView extends VerticalLayout
 {
-    private CrmService service;
+    private final CrmService service;
 
     public DashboardView(CrmService service)
     {

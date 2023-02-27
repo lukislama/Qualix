@@ -22,7 +22,7 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class MainLayout extends AppLayout
 {
-    private SecurityService securityService;
+    private final SecurityService securityService;
 
     public MainLayout(SecurityService securityService)
     {
@@ -42,7 +42,7 @@ public class MainLayout extends AppLayout
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
         header.expand(logo);
         header.setWidthFull();
-        header.addClassNames("pz-0", "px-m");
+        header.addClassNames("py-0", "px-m");
 
         addToNavbar(header);
     }

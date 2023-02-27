@@ -15,6 +15,7 @@ import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.binder.PropertyId;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
 
@@ -28,7 +29,9 @@ public class ContactForm extends FormLayout
     TextField firstName = new TextField("First name");
     TextField lastName = new TextField("Last name");
     EmailField email = new EmailField("Email");
+    @PropertyId("status")
     ComboBox<Status> statusComboBox = new ComboBox<>("Status");
+    @PropertyId("company")
     ComboBox<Company> companyComboBox = new ComboBox<>("Company");
 
     Button save = new Button("Save");
@@ -72,6 +75,8 @@ public class ContactForm extends FormLayout
 
         save.addClickShortcut(Key.ENTER);
         close.addClickShortcut(Key.ESCAPE);
+
+        binder.addStatusChangeListener(e -> save.setEnabled(binder.isValid()));
 
         return new HorizontalLayout(save, delete, close);
     }
