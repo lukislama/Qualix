@@ -21,20 +21,20 @@ import java.util.List;
 
 public class ContactForm extends FormLayout
 {
-    Binder<Contact> binder = new BeanValidationBinder<>(Contact.class);
+    final Binder<Contact> binder = new BeanValidationBinder<>(Contact.class);
     Contact contact;
 
-    TextField studyId = new TextField("ID");
-    TextField firstName = new TextField("First name");
-    TextField lastName = new TextField("Last name");
-    EmailField email = new EmailField("Email");
-    TextField phoneNum = new TextField("Phone number");
+    final TextField studyId = new TextField("ID");
+    final TextField firstName = new TextField("First name");
+    final TextField lastName = new TextField("Last name");
+    final EmailField email = new EmailField("Email");
+    final TextField phoneNum = new TextField("Phone number");
 
-    ComboBox<Status> status = new ComboBox<>("Status");
+    final ComboBox<Status> status = new ComboBox<>("Status");
 
-    Button save = new Button("Save");
-    Button delete = new Button("Delete");
-    Button close = new Button("Cancel");
+    final Button save = new Button("Save");
+    final Button delete = new Button("Delete");
+    final Button close = new Button("Cancel");
 
     public ContactForm(List<Status> statuses)
     {
@@ -94,7 +94,7 @@ public class ContactForm extends FormLayout
     // Events
     public static abstract class ContactFormEvent extends ComponentEvent<ContactForm>
     {
-        private Contact contact;
+        private final Contact contact;
 
         protected ContactFormEvent(ContactForm source, Contact contact)
         {

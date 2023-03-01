@@ -1,7 +1,6 @@
 package com.example.application.views.list;
 
 import com.example.application.data.entity.Contact;
-import com.example.application.data.entity.Status;
 import com.example.application.data.service.CrmService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
@@ -16,9 +15,6 @@ import com.vaadin.flow.router.Route;
 import org.springframework.context.annotation.Scope;
 
 import javax.annotation.security.PermitAll;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 @org.springframework.stereotype.Component
 @Scope("prototype")
@@ -27,10 +23,10 @@ import java.util.concurrent.ThreadLocalRandom;
 @PermitAll
 public class ListView extends VerticalLayout
 {
-    Grid<Contact> contactGrid = new Grid<>(Contact.class);
-    TextField filterText = new TextField();
+    final Grid<Contact> contactGrid = new Grid<>(Contact.class);
+    final TextField filterText = new TextField();
     ContactForm contactForm;
-    CrmService service;
+    final CrmService service;
 
     public ListView(CrmService service)
     {
