@@ -1,6 +1,5 @@
 package com.example.application.views.list;
 
-import com.example.application.data.entity.Company;
 import com.example.application.data.entity.Contact;
 import com.example.application.data.entity.Status;
 import com.vaadin.flow.component.ComponentEvent;
@@ -15,7 +14,6 @@ import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.BeanValidationBinder;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.PropertyId;
 import com.vaadin.flow.data.binder.ValidationException;
 import com.vaadin.flow.shared.Registration;
 
@@ -26,33 +24,32 @@ public class ContactForm extends FormLayout
     Binder<Contact> binder = new BeanValidationBinder<>(Contact.class);
     Contact contact;
 
+    TextField studyId = new TextField("ID");
     TextField firstName = new TextField("First name");
     TextField lastName = new TextField("Last name");
     EmailField email = new EmailField("Email");
-    @PropertyId("status")
-    ComboBox<Status> statusComboBox = new ComboBox<>("Status");
-    @PropertyId("company")
-    ComboBox<Company> companyComboBox = new ComboBox<>("Company");
+    TextField phoneNum = new TextField("Phone number");
+
+    ComboBox<Status> status = new ComboBox<>("Status");
 
     Button save = new Button("Save");
     Button delete = new Button("Delete");
     Button close = new Button("Cancel");
 
-    public ContactForm(List<Company> companies, List<Status> statuses)
+    public ContactForm(List<Status> statuses)
     {
         addClassName("contact-form");
         binder.bindInstanceFields(this);
 
-        companyComboBox.setItems(companies);
-        companyComboBox.setItemLabelGenerator(Company::getName);
-        statusComboBox.setItems(statuses);
-        statusComboBox.setItemLabelGenerator(Status::getName);
+        status.setItems(statuses);
+        status.setItemLabelGenerator(Status::getName);
 
-        add(firstName,
+        add(studyId,
+                firstName,
                 lastName,
                 email,
-                companyComboBox,
-                statusComboBox,
+                phoneNum,
+                status,
                 createButtonsLayout());
     }
 

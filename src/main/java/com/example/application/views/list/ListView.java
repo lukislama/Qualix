@@ -1,6 +1,5 @@
 package com.example.application.views.list;
 
-import com.example.application.data.entity.Company;
 import com.example.application.data.entity.Contact;
 import com.example.application.data.entity.Status;
 import com.example.application.data.service.CrmService;
@@ -47,82 +46,8 @@ public class ListView extends VerticalLayout
             getContent()
         );
 
-        generateContacts();
-
         updateList();
         closeEditor();
-    }
-
-    private void generateContacts()
-    {
-        List<Company> companies = new ArrayList<>();
-        companies.add(new Company());
-        companies.add(new Company());
-        companies.add(new Company());
-
-        companies.get(0).setName("CVUT");
-        companies.get(1).setName("Skoda");
-        companies.get(2).setName("Dell");
-
-        for (Company company : companies)
-        {
-            service.saveCompany(company);
-        }
-
-        List<Status> statuses = new ArrayList<>();
-        statuses.add(new Status());
-        statuses.add(new Status());
-        statuses.add(new Status());
-
-        statuses.get(0).setName("In study");
-        statuses.get(1).setName("Finished");
-        statuses.get(2).setName("Dropped out");
-
-        for (Status status : statuses)
-        {
-            service.saveStatus(status);
-        }
-
-        List<String> firstNames = new ArrayList<>();
-        firstNames.add("John");
-        firstNames.add("Bob");
-        firstNames.add("Alex");
-
-        List<String> lastNames = new ArrayList<>();
-        lastNames.add("Snow");
-        lastNames.add("Jobs");
-        lastNames.add("Fitzgerald");
-
-        int randomNum;
-        String firstName, lastName, email;
-        Company company;
-        Status status;
-        Contact contact;
-        for (int i = 0; i < 50; i++)
-        {
-            randomNum = ThreadLocalRandom.current().nextInt(0, 2 + 1);
-            firstName = firstNames.get(randomNum);
-
-            randomNum = ThreadLocalRandom.current().nextInt(0, 2 + 1);
-            lastName = lastNames.get(randomNum);
-
-            randomNum = ThreadLocalRandom.current().nextInt(0, 2 + 1);
-            company = companies.get(randomNum);
-
-            randomNum = ThreadLocalRandom.current().nextInt(0, 2 + 1);
-            status = statuses.get(randomNum);
-
-            email = firstName + "." + lastName + "@email.com";
-
-            contact = new Contact();
-            contact.setFirstName(firstName);
-            contact.setLastName(lastName);
-            contact.setCompany(company);
-            contact.setStatus(status);
-            contact.setEmail(email);
-
-            service.saveContact(contact);
-        }
     }
 
     private void closeEditor()
@@ -152,7 +77,7 @@ public class ListView extends VerticalLayout
 
     private void configureForm()
     {
-        contactForm = new ContactForm(service.findAllCompanies(), service.findAllStatuses());
+        contactForm = new ContactForm(service.findAllStatuses());
         contactForm.setWidth("25em");
 
         contactForm.addListener(ContactForm.SaveEvent.class, this::saveContact);
@@ -200,15 +125,11 @@ public class ListView extends VerticalLayout
         contactGrid.addClassName("contact-grid");
         contactGrid.setSizeFull();
 
-        contactGrid.setColumns("firstName", "lastName", "email");
+        contactGrid.setColumns("studyId", "firstName", "lastName", "email", "phoneNum");
         contactGrid.addColumn(contact -> contact
                         .getStatus()
                         .getName())
                 .setHeader("Status");
-        contactGrid.addColumn(contact -> contact
-                .getCompany()
-                .getName())
-                .setHeader("Company");
 
         contactGrid.getColumns().forEach(column -> column.setAutoWidth(true));
 
@@ -228,18 +149,3 @@ public class ListView extends VerticalLayout
         addClassName("editing");
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
