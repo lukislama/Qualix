@@ -58,6 +58,38 @@ public class CrmService
         contactRepository.save(contact);
     }
 
+    public void saveCompany(Company company)
+    {
+        if(company == null)
+        {
+            System.err.println("Company is null.");
+            return;
+        }
+
+        companyRepository.save(company);
+    }
+
+    public void deleteCompany(Company company)
+    {
+        companyRepository.delete(company);
+    }
+
+    public void saveStatus(Status status)
+    {
+        if(status == null)
+        {
+            System.err.println("Company is null.");
+            return;
+        }
+
+        statusRepository.save(status);
+    }
+
+    public void deleteStatus(Status status)
+    {
+        statusRepository.delete(status);
+    }
+
     public List<Company> findAllCompanies()
     {
         return companyRepository.findAll();

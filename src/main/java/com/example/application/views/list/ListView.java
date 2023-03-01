@@ -47,7 +47,7 @@ public class ListView extends VerticalLayout
             getContent()
         );
 
-        //generateContacts();
+        generateContacts();
 
         updateList();
         closeEditor();
@@ -64,14 +64,24 @@ public class ListView extends VerticalLayout
         companies.get(1).setName("Skoda");
         companies.get(2).setName("Dell");
 
+        for (Company company : companies)
+        {
+            service.saveCompany(company);
+        }
+
         List<Status> statuses = new ArrayList<>();
         statuses.add(new Status());
         statuses.add(new Status());
         statuses.add(new Status());
 
         statuses.get(0).setName("In study");
-        statuses.get(0).setName("Finished");
-        statuses.get(0).setName("Dropped out");
+        statuses.get(1).setName("Finished");
+        statuses.get(2).setName("Dropped out");
+
+        for (Status status : statuses)
+        {
+            service.saveStatus(status);
+        }
 
         List<String> firstNames = new ArrayList<>();
         firstNames.add("John");
