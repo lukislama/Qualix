@@ -4,9 +4,9 @@
     <modelVersion>4.0.0</modelVersion>
     <!-- Project from https://start.vaadin.com/project/76a18f70-7a3c-4dda-ae2a-033e092bf5bd -->
     <groupId>com.example.application</groupId>
-    <artifactId>flowcrmtutorial</artifactId>
-    <name>flowcrmtutorial</name>
-    <version>1.0-SNAPSHOT</version>
+    <artifactId>LAMPView</artifactId>
+    <name>LAMPView</name>
+    <version>0.2</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -136,7 +136,7 @@
         <dependency>
             <groupId>io.github.bonigarcia</groupId>
             <artifactId>webdrivermanager</artifactId>
-            <version>5.1.1</version>
+            <version>5.3.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
