@@ -14,13 +14,25 @@ import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.spring.security.AuthenticationContext;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.Optional;
+
 public class MainLayout extends AppLayout
 {
     private final transient AuthenticationContext authenticationContext;
+    private UserDetails userDetails;
 
     public MainLayout(AuthenticationContext authenticationContext)
     {
         this.authenticationContext = authenticationContext;
+
+        Optional<UserDetails> optionalUserDetails = authenticationContext.getAuthenticatedUser(UserDetails.class);
+        optionalUserDetails.ifPresent(details -> userDetails = details);
+
+        if(optionalUserDetails.isEmpty())
+        {
+            System.err.println("User detail is not set, this should never happen.");
+        }
+
         createHeader();
         createDrawer();
     }
@@ -34,8 +46,7 @@ public class MainLayout extends AppLayout
         if (authenticationContext.isAuthenticated())
         {
             Button logout = new Button("Log out", e -> this.authenticationContext.logout());
-            Span loggedUser = new Span("Welcome " +
-                    authenticationContext.getAuthenticatedUser(UserDetails.class).get().getUsername());
+            Span loggedUser = new Span("Welcome " + userDetails.getUsername());
             header = new HorizontalLayout(new DrawerToggle(),
                     logo,
                     loggedUser,
@@ -56,8 +67,7 @@ public class MainLayout extends AppLayout
     }
     private void createDrawer()
     {
-        if(authenticationContext.getAuthenticatedUser(UserDetails.class)
-                .get()
+        if(userDetails
                 .getUsername()
                 .equals("admin"))
         {
@@ -65,8 +75,8 @@ public class MainLayout extends AppLayout
             listView.setHighlightCondition(HighlightConditions.sameLocation());
 
             addToDrawer(new VerticalLayout(
-                    listView,
-                    new RouterLink("Dashboard", DashboardView.class)));
+                    new RouterLink("Dashboard", DashboardView.class),
+                    listView));
 
             return;
         }
