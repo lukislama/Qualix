@@ -12,15 +12,12 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import org.springframework.context.annotation.Scope;
 
-import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 
-@org.springframework.stereotype.Component
-@Scope("prototype")
 @PageTitle("Participant list")
-@Route(value = "", layout = MainLayout.class)
-@PermitAll
+@Route(value = "list", layout = MainLayout.class)
+@RolesAllowed("ADMIN")
 public class ListView extends VerticalLayout
 {
     final Grid<Contact> contactGrid = new Grid<>(Contact.class);

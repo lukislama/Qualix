@@ -6,10 +6,13 @@ import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.springframework.context.annotation.Scope;
 
 import javax.annotation.security.PermitAll;
 
-@Route(value = "dashboard", layout = MainLayout.class)
+@org.springframework.stereotype.Component
+@Scope("prototype")
+@Route(value = "", layout = MainLayout.class)
 @PageTitle("Dashboard | LAMPView")
 @PermitAll
 public class DashboardView extends VerticalLayout

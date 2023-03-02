@@ -4,9 +4,11 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.login.LoginForm;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.*;
+import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 @Route("login")
 @PageTitle("Login | LAMPView")
+@AnonymousAllowed
 public class LoginView extends VerticalLayout implements BeforeEnterObserver
 {
     private final LoginForm loginForm = new LoginForm();
