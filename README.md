@@ -1,7 +1,11 @@
 # LAMPView
 
-LAMPView is a thesis project built using Vaadin https://vaadin.com/. It's purpose is to provide missing functionality to
-the LAMP platform - https://docs.lamp.digital/.
+LAMPView is a thesis project built using [Vaadin](https://vaadin.com/). It's purpose is to provide missing functionality to
+the [LAMP platform](https://docs.lamp.digital/).
+
+## Implemented features
+
+- See the participants of a study and their contact information
 
 ## Planned features
 
@@ -10,4 +14,3 @@ this application the study staff can:
 - Quickly check the data quality of collected data
 - Receive email notifications regarding the data quality
 - Generate graphs using collected data
-- See the participants of a study and their contact information
