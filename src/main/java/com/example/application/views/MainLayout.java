@@ -14,11 +14,13 @@ import com.vaadin.flow.router.RouterLink;
 import com.vaadin.flow.spring.security.AuthenticationContext;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import javax.annotation.PostConstruct;
 import java.util.Optional;
 
 public class MainLayout extends AppLayout
 {
     private final transient AuthenticationContext authenticationContext;
+
     private UserDetails userDetails;
 
     public MainLayout(AuthenticationContext authenticationContext)
@@ -32,7 +34,11 @@ public class MainLayout extends AppLayout
         {
             System.err.println("User detail is not set, this should never happen.");
         }
+    }
 
+    @PostConstruct
+    public void init()
+    {
         createHeader();
         createDrawer();
     }
@@ -45,7 +51,7 @@ public class MainLayout extends AppLayout
 
         if (authenticationContext.isAuthenticated())
         {
-            Button logout = new Button("Log out", e -> this.authenticationContext.logout());
+            Button logout = new Button("Log out", e -> authenticationContext.logout());
             Span loggedUser = new Span("Welcome " + userDetails.getUsername());
             header = new HorizontalLayout(new DrawerToggle(),
                     logo,
@@ -67,9 +73,9 @@ public class MainLayout extends AppLayout
     }
     private void createDrawer()
     {
-        if(userDetails
-                .getUsername()
-                .equals("admin"))
+        if(authenticationContext.isAuthenticated()
+        && userDetails.getAuthorities().stream()
+                .anyMatch(r -> r.getAuthority().equals("ROLE_ADMIN")))
         {
             RouterLink listView = new RouterLink("List", ListView.class);
             listView.setHighlightCondition(HighlightConditions.sameLocation());
@@ -77,11 +83,11 @@ public class MainLayout extends AppLayout
             addToDrawer(new VerticalLayout(
                     new RouterLink("Dashboard", DashboardView.class),
                     listView));
-
-            return;
         }
-
-        addToDrawer(new VerticalLayout(
-                new RouterLink("Dashboard", DashboardView.class)));
+        else
+        {
+            addToDrawer(new VerticalLayout(
+                    new RouterLink("Dashboard", DashboardView.class)));
+        }
     }
 }
