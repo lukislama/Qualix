@@ -1,8 +1,10 @@
 package com.example.application.data.service;
 
 import com.example.application.data.entity.Contact;
+import com.example.application.data.entity.Data;
 import com.example.application.data.entity.Status;
 import com.example.application.data.repository.ContactRepository;
+import com.example.application.data.repository.DataRepository;
 import com.example.application.data.repository.StatusRepository;
 import org.springframework.stereotype.Service;
 
@@ -15,14 +17,18 @@ public class CrmService
 {
     private final ContactRepository contactRepository;
     private final StatusRepository statusRepository;
+    private final DataRepository dataRepository;
 
     public CrmService(ContactRepository contactRepository,
-                      StatusRepository statusRepository)
+                      StatusRepository statusRepository,
+                      DataRepository dataRepository)
     {
         this.contactRepository = contactRepository;
         this.statusRepository = statusRepository;
+        this.dataRepository = dataRepository;
 
         generateContacts();
+        generateData();
     }
 
     private void generateContacts()
@@ -84,26 +90,40 @@ public class CrmService
         }
     }
 
-    public List<Contact> findAllContacts(String stringFilter)
+    private void generateData()
+    {
+        List<Contact> contactList = contactRepository.findAll();
+        String[] trafficLight = new String[]{"🟢", "🟡", "🔴"};
+
+        Data data;
+        for (Contact contact : contactList)
+        {
+            data = new Data();
+            data.setParticipantStudyId(contact.getStudyId());
+            data.setGPS(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
+            data.setAccelerometer(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
+            data.setDisplay(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
+            data.setDeviceMotion(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
+
+            this.saveData(data);
+        }
+    }
+
+    public List<Data> findAllData(String stringFilter)
     {
         if (stringFilter == null || stringFilter.isEmpty())
         {
-            return contactRepository.findAll();
+            return dataRepository.findAll();
         }
         else
         {
-            return contactRepository.search(stringFilter);
+            return dataRepository.search(stringFilter);
         }
     }
 
     public long countContacts()
     {
         return contactRepository.count();
-    }
-
-    public void deleteContact(Contact contact)
-    {
-        contactRepository.delete(contact);
     }
 
     public void saveContact(Contact contact)
@@ -116,11 +136,29 @@ public class CrmService
         contactRepository.save(contact);
     }
 
+    public void deleteContact(Contact contact)
+    {
+        contactRepository.delete(contact);
+    }
+
+    public List<Contact> findAllContacts(String stringFilter)
+    {
+        if (stringFilter == null || stringFilter.isEmpty())
+        {
+            return contactRepository.findAll();
+        }
+        else
+        {
+            return contactRepository.search(stringFilter);
+        }
+    }
+
+
     public void saveStatus(Status status)
     {
         if(status == null)
         {
-            System.err.println("Company is null.");
+            System.err.println("Status is null.");
             return;
         }
 
@@ -132,6 +170,21 @@ public class CrmService
         statusRepository.delete(status);
     }
 
+    public void saveData(Data data)
+    {
+        if(data == null)
+        {
+            System.err.println("Data is null.");
+            return;
+        }
+
+        dataRepository.save(data);
+    }
+
+    public void deleteData(Data data)
+    {
+        dataRepository.delete(data);
+    }
 
     public List<Status> findAllStatuses()
     {

@@ -2,6 +2,7 @@ package com.example.application.data.entity;
 
 import javax.persistence.Entity;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -27,6 +28,9 @@ public class Contact extends AbstractEntity
     @NotNull
     @ManyToOne
     private Status status;
+
+    @OneToOne
+    private Data data;
 
     @Override
     public String toString()
@@ -92,5 +96,15 @@ public class Contact extends AbstractEntity
     public void setStatus(Status status)
     {
         this.status = status;
+    }
+
+    public Data getData()
+    {
+        return data;
+    }
+
+    public void setData(Data data)
+    {
+        this.data = data;
     }
 }
