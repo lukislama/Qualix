@@ -1,5 +1,6 @@
 package com.example.application.views;
 
+import com.example.application.views.dashboard.DashboardView;
 import com.example.application.views.list.ListView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;

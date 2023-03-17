@@ -29,7 +29,7 @@ public class Contact extends AbstractEntity
     @ManyToOne
     private Status status;
 
-    @OneToOne
+    @OneToOne(mappedBy = "contact")
     private Data data;
 
     @Override

@@ -1,7 +1,8 @@
-package com.example.application.views;
+package com.example.application.views.dashboard;
 
 import com.example.application.data.entity.Data;
 import com.example.application.data.service.CrmService;
+import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
@@ -23,6 +24,7 @@ public class DashboardView extends VerticalLayout
 {
     final Grid<Data> dataGrid = new Grid<>(Data.class);
     final TextField filterText = new TextField();
+    InnerListView innerListView;
     private final CrmService service;
 
     public DashboardView(CrmService service)
@@ -32,6 +34,7 @@ public class DashboardView extends VerticalLayout
         setSizeFull();
 
         configureGrid();
+        configureInnerListView();
 
         add(
             getToolbar(),
@@ -39,16 +42,24 @@ public class DashboardView extends VerticalLayout
         );
 
         updateList();
+        closeInnerList();
     }
 
-    private Component getContent()
+    private void configureGrid()
     {
-        HorizontalLayout content = new HorizontalLayout(dataGrid);
-        content.addClassName("content");
-        content.setSizeFull();
+        dataGrid.addClassName("data-grid");
+        dataGrid.setSizeFull();
 
-        return content;
+        dataGrid.setColumns("participantStudyId", "GPS", "accelerometer", "display", "deviceMotion");
+        dataGrid.getColumns().forEach(column -> column.setAutoWidth(true));
+        dataGrid.asSingleSelect().addValueChangeListener(e -> highlightDataPoint(e.getValue()));
     }
+
+    private void configureInnerListView()
+    {
+        innerListView = new InnerListView();
+    }
+
 
     private Component getToolbar()
     {
@@ -62,18 +73,39 @@ public class DashboardView extends VerticalLayout
         return toolbar;
     }
 
+    private Component getContent()
+    {
+        HorizontalLayout content = new HorizontalLayout(new VerticalLayout(dataGrid), innerListView);
+
+        content.addClassName("content");
+        content.setSizeFull();
+
+        return content;
+    }
+
     private void updateList()
     {
         dataGrid.setItems(service.findAllData(filterText.getValue()));
     }
 
-    private void configureGrid()
+
+    private void closeInnerList()
     {
-        dataGrid.addClassName("data-grid");
-        dataGrid.setSizeFull();
+        innerListView.setData(null);
+        innerListView.setVisible(false);
+        removeClassName("highlighted");
+    }
 
-        dataGrid.setColumns("participantStudyId", "GPS", "accelerometer", "display", "deviceMotion");
+    private void highlightDataPoint(Data data)
+    {
+        if(data == null)
+        {
+            closeInnerList();
+            return;
+        }
 
-        dataGrid.getColumns().forEach(column -> column.setAutoWidth(true));
+        innerListView.setData(data);
+        innerListView.setVisible(true);
+        addClassName("highlighted");
     }
 }

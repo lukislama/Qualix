@@ -1,16 +1,19 @@
 package com.example.application.data.entity;
 
-import javax.annotation.Nullable;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
-import java.util.ArrayList;
-import java.util.List;
+import javax.validation.constraints.NotNull;
 
 @Entity
-public class Data extends AbstractEntity
+public class DataPoint extends AbstractEntity
 {
     @NotEmpty
     private String participantStudyId = "";
+
+    @NotEmpty
+    private String date = "";
 
     @NotEmpty
     private String GPS = "";
@@ -24,14 +27,11 @@ public class Data extends AbstractEntity
     @NotEmpty
     private String deviceMotion = "";
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "contact_id")
-    private Contact contact;
-
-    @OneToMany(
-            mappedBy = "data",
-            fetch = FetchType.EAGER)
-    private List<DataPoint> dataPoints = new ArrayList<>();
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "data_id")
+    @NotNull
+    @JsonIgnoreProperties({"dataPoints"})
+    private Data data;
 
     public String getParticipantStudyId()
     {
@@ -41,6 +41,16 @@ public class Data extends AbstractEntity
     public void setParticipantStudyId(String participantStudyId)
     {
         this.participantStudyId = participantStudyId;
+    }
+
+    public String getDate()
+    {
+        return date;
+    }
+
+    public void setDate(String date)
+    {
+        this.date = date;
     }
 
     public String getGPS()
@@ -83,23 +93,13 @@ public class Data extends AbstractEntity
         this.deviceMotion = deviceMotion;
     }
 
-    public Contact getContact()
+    public Data getData()
     {
-        return contact;
+        return data;
     }
 
-    public void setContact(Contact contact)
+    public void setData(Data data)
     {
-        this.contact = contact;
-    }
-
-    public List<DataPoint> getDataPoints()
-    {
-        return dataPoints;
-    }
-
-    public void setDataPoints(List<DataPoint> dataPoints)
-    {
-        this.dataPoints = dataPoints;
+        this.data = data;
     }
 }

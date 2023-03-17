@@ -2,12 +2,15 @@ package com.example.application.data.service;
 
 import com.example.application.data.entity.Contact;
 import com.example.application.data.entity.Data;
+import com.example.application.data.entity.DataPoint;
 import com.example.application.data.entity.Status;
 import com.example.application.data.repository.ContactRepository;
+import com.example.application.data.repository.DataPointRepository;
 import com.example.application.data.repository.DataRepository;
 import com.example.application.data.repository.StatusRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -18,21 +21,42 @@ public class CrmService
     private final ContactRepository contactRepository;
     private final StatusRepository statusRepository;
     private final DataRepository dataRepository;
+    private final DataPointRepository dataPointRepository;
 
     public CrmService(ContactRepository contactRepository,
                       StatusRepository statusRepository,
-                      DataRepository dataRepository)
+                      DataRepository dataRepository,
+                      DataPointRepository dataPointRepository)
     {
         this.contactRepository = contactRepository;
         this.statusRepository = statusRepository;
         this.dataRepository = dataRepository;
+        this.dataPointRepository = dataPointRepository;
 
-        generateContacts();
         generateData();
+        System.out.println();
     }
 
-    private void generateContacts()
+    private void generateData()
     {
+        //Data generation
+        String[] trafficLight = new String[]{"🟢", "🟡", "🔴"};
+        List<Data> dataList = new ArrayList<>();
+
+        Data data;
+        for (int i = 0; i < 5; i++)
+        {
+            data = new Data();
+            data.setGPS(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
+            data.setAccelerometer(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
+            data.setDisplay(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
+            data.setDeviceMotion(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
+
+            dataList.add(data);
+        }
+
+
+        //Contact + status generation
         List<Status> statuses = new ArrayList<>();
         statuses.add(new Status());
         statuses.add(new Status());
@@ -86,11 +110,43 @@ public class CrmService
             contact.setPhoneNum(phoneNum);
             contact.setStatus(status);
 
-            this.saveContact(contact);
+            data = dataList.get(i);
+            data.setParticipantStudyId(studyId);
+            data.setContact(contact);
+
+            this.saveData(data);
+        }
+
+        //DataPoints generation
+        DataPoint dataPoint;
+        LocalDate date;
+        List<Contact> contactList = contactRepository.findAll();
+        dataList = dataRepository.findAll();
+        for (int i = 0; i < 5; i++)
+        {
+            contact = contactList.get(i);
+            data = dataList.get(i);
+
+            date = LocalDate.of(2023, 3, 9);
+            for (int j = 0; j < 10; j++)
+            {
+                dataPoint = new DataPoint();
+                dataPoint.setParticipantStudyId(contact.getStudyId());
+                dataPoint.setDate(date.toString());
+                dataPoint.setGPS(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
+                dataPoint.setAccelerometer(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
+                dataPoint.setDisplay(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
+                dataPoint.setDeviceMotion(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
+                dataPoint.setData(data);
+
+                date = date.minusDays(1);
+
+                this.saveDataPoint(dataPoint);
+            }
         }
     }
 
-    private void generateData()
+    /*private void generateData()
     {
         List<Contact> contactList = contactRepository.findAll();
         String[] trafficLight = new String[]{"🟢", "🟡", "🔴"};
@@ -104,10 +160,43 @@ public class CrmService
             data.setAccelerometer(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
             data.setDisplay(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
             data.setDeviceMotion(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
+            //data.setContact(contact);
+
+            contact.setData(data);
 
             this.saveData(data);
         }
-    }
+    }*/
+
+    /*private void generateDataPoints()
+    {
+        List<Contact> contactList = contactRepository.findAll();
+        String[] trafficLight = new String[]{"🟢", "🟡", "🔴"};
+
+        DataPoint dataPoint;
+        LocalDate date;
+        for (Contact contact : contactList)
+        {
+            date = LocalDate.of(2023, 3, 9);
+            for (int i = 0; i < 10; i++)
+            {
+                dataPoint = new DataPoint();
+                dataPoint.setParticipantStudyId(contact.getStudyId());
+                dataPoint.setDate(date.toString());
+                dataPoint.setGPS(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
+                dataPoint.setAccelerometer(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
+                dataPoint.setDisplay(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
+                dataPoint.setDeviceMotion(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
+
+                assert contact.getData().getDataPoints() != null;
+                contact.getData().getDataPoints().add(dataPoint);
+
+                date = date.minusDays(1);
+
+                this.saveDataPoint(dataPoint);
+            }
+        }
+    }*/
 
     public List<Data> findAllData(String stringFilter)
     {
@@ -170,6 +259,11 @@ public class CrmService
         statusRepository.delete(status);
     }
 
+    public List<Status> findAllStatuses()
+    {
+        return statusRepository.findAll();
+    }
+
     public void saveData(Data data)
     {
         if(data == null)
@@ -186,8 +280,19 @@ public class CrmService
         dataRepository.delete(data);
     }
 
-    public List<Status> findAllStatuses()
+    public void saveDataPoint(DataPoint dataPoint)
     {
-        return statusRepository.findAll();
+        if(dataPoint == null)
+        {
+            System.err.println("DataPoint is null.");
+            return;
+        }
+
+        dataPointRepository.save(dataPoint);
+    }
+
+    public void deleteDataPoint(DataPoint dataPoint)
+    {
+        dataPointRepository.delete(dataPoint);
     }
 }
