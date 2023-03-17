@@ -58,6 +58,7 @@ public class DashboardView extends VerticalLayout
     private void configureInnerListView()
     {
         innerListView = new InnerListView();
+        innerListView.setPadding(false);
     }
 
 
@@ -75,7 +76,7 @@ public class DashboardView extends VerticalLayout
 
     private Component getContent()
     {
-        HorizontalLayout content = new HorizontalLayout(new VerticalLayout(dataGrid), innerListView);
+        HorizontalLayout content = new HorizontalLayout(dataGrid, innerListView);
 
         content.addClassName("content");
         content.setSizeFull();
