@@ -22,6 +22,7 @@ public class CrmService
     private final StatusRepository statusRepository;
     private final DataRepository dataRepository;
     private final DataPointRepository dataPointRepository;
+    private String lampServerAddress, lampAccessKey, lampSecretKey;
 
     public CrmService(ContactRepository contactRepository,
                       StatusRepository statusRepository,
@@ -34,7 +35,6 @@ public class CrmService
         this.dataPointRepository = dataPointRepository;
 
         generateData();
-        System.out.println();
     }
 
     private void generateData()
@@ -146,58 +146,6 @@ public class CrmService
         }
     }
 
-    /*private void generateData()
-    {
-        List<Contact> contactList = contactRepository.findAll();
-        String[] trafficLight = new String[]{"🟢", "🟡", "🔴"};
-
-        Data data;
-        for (Contact contact : contactList)
-        {
-            data = new Data();
-            data.setParticipantStudyId(contact.getStudyId());
-            data.setGPS(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
-            data.setAccelerometer(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
-            data.setDisplay(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
-            data.setDeviceMotion(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
-            //data.setContact(contact);
-
-            contact.setData(data);
-
-            this.saveData(data);
-        }
-    }*/
-
-    /*private void generateDataPoints()
-    {
-        List<Contact> contactList = contactRepository.findAll();
-        String[] trafficLight = new String[]{"🟢", "🟡", "🔴"};
-
-        DataPoint dataPoint;
-        LocalDate date;
-        for (Contact contact : contactList)
-        {
-            date = LocalDate.of(2023, 3, 9);
-            for (int i = 0; i < 10; i++)
-            {
-                dataPoint = new DataPoint();
-                dataPoint.setParticipantStudyId(contact.getStudyId());
-                dataPoint.setDate(date.toString());
-                dataPoint.setGPS(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
-                dataPoint.setAccelerometer(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
-                dataPoint.setDisplay(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
-                dataPoint.setDeviceMotion(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
-
-                assert contact.getData().getDataPoints() != null;
-                contact.getData().getDataPoints().add(dataPoint);
-
-                date = date.minusDays(1);
-
-                this.saveDataPoint(dataPoint);
-            }
-        }
-    }*/
-
     public List<Data> findAllData(String stringFilter)
     {
         if (stringFilter == null || stringFilter.isEmpty())
@@ -294,5 +242,35 @@ public class CrmService
     public void deleteDataPoint(DataPoint dataPoint)
     {
         dataPointRepository.delete(dataPoint);
+    }
+
+    public String getLampServerAddress()
+    {
+        return lampServerAddress;
+    }
+
+    public void setLampServerAddress(String lampServerAddress)
+    {
+        this.lampServerAddress = lampServerAddress;
+    }
+
+    public String getLampAccessKey()
+    {
+        return lampAccessKey;
+    }
+
+    public void setLampAccessKey(String lampAccessKey)
+    {
+        this.lampAccessKey = lampAccessKey;
+    }
+
+    public String getLampSecretKey()
+    {
+        return lampSecretKey;
+    }
+
+    public void setLampSecretKey(String lampSecretKey)
+    {
+        this.lampSecretKey = lampSecretKey;
     }
 }
