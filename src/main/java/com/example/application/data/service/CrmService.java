@@ -8,8 +8,6 @@ import com.example.application.data.repository.ContactRepository;
 import com.example.application.data.repository.DataPointRepository;
 import com.example.application.data.repository.DataRepository;
 import com.example.application.data.repository.StatusRepository;
-import com.vaadin.flow.component.notification.Notification;
-import com.vaadin.flow.component.notification.NotificationVariant;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;

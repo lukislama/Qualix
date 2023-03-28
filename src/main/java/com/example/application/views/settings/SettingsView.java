@@ -15,12 +15,7 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import javax.annotation.security.RolesAllowed;
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @PageTitle("Settings | LAMPVIew")
 @Route(value = "settings", layout = MainLayout.class)
@@ -35,7 +30,7 @@ public class SettingsView extends VerticalLayout
 
     //Connection test
     final Button testButton = new Button("Test connection");
-    CrmService service;
+    final CrmService service;
 
     public SettingsView(CrmService service)
     {
@@ -195,21 +190,3 @@ public class SettingsView extends VerticalLayout
         service.setServer();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
