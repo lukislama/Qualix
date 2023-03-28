@@ -8,12 +8,19 @@ import com.example.application.data.repository.ContactRepository;
 import com.example.application.data.repository.DataPointRepository;
 import com.example.application.data.repository.DataRepository;
 import com.example.application.data.repository.StatusRepository;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.stream.Collectors;
 
 @Service
 public class CrmService
@@ -23,6 +30,7 @@ public class CrmService
     private final DataRepository dataRepository;
     private final DataPointRepository dataPointRepository;
     private String lampServerAddress, lampAccessKey, lampSecretKey;
+    private boolean serverSet;
 
     public CrmService(ContactRepository contactRepository,
                       StatusRepository statusRepository,
@@ -34,7 +42,28 @@ public class CrmService
         this.dataRepository = dataRepository;
         this.dataPointRepository = dataPointRepository;
 
-        generateData();
+        serverSet = false;
+
+        saveStatuses();
+
+        //generateData();
+    }
+
+    private void saveStatuses()
+    {
+        List<Status> statuses = new ArrayList<>();
+        statuses.add(new Status());
+        statuses.add(new Status());
+        statuses.add(new Status());
+
+        statuses.get(0).setName("In study");
+        statuses.get(1).setName("Finished");
+        statuses.get(2).setName("Dropped out");
+
+        for (Status status : statuses)
+        {
+            this.saveStatus(status);
+        }
     }
 
     private void generateData()
@@ -143,6 +172,77 @@ public class CrmService
 
                 this.saveDataPoint(dataPoint);
             }
+        }
+    }
+
+    public void setServer()
+    {
+        serverSet = true;
+
+        getStudyParticipants();
+    }
+
+    private void getStudyParticipants()
+    {
+        ProcessBuilder processBuilder = new ProcessBuilder("python3",
+                "get_study_participants.py",
+                lampAccessKey,
+                lampSecretKey,
+                lampServerAddress);
+
+        Process process;
+        try
+        {
+            process = processBuilder.start();
+        }
+        catch (IOException e)
+        {
+            System.err.println("An error occurred while getting study participants.");
+
+            e.printStackTrace();
+            return;
+        }
+
+        List<String> results = new BufferedReader(
+                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))
+                .lines()
+                .collect(Collectors.toList());
+
+        int exitCode;
+        try
+        {
+            exitCode = process.waitFor();
+        }
+        catch (InterruptedException e)
+        {
+            System.err.println("An error occurred while getting study participants.");
+
+            e.printStackTrace();
+            return;
+        }
+
+        if(exitCode == 0)
+        {
+            Contact contact;
+            for (String participantId : results)
+            {
+                contact = new Contact();
+                contact.setStudyId(participantId);
+                contact.setFirstName("Change me");
+                contact.setLastName("Change me");
+                contact.setEmail("change@me.com");
+                contact.setPhoneNum("0000000000");
+                contact.setStatus(findAllStatuses().stream()
+                        .filter(e -> e.getName().equals("In study"))
+                        .collect(Collectors.toList())
+                        .get(0));
+
+                this.saveContact(contact);
+            }
+        }
+        else
+        {
+            System.err.println("An error occurred while getting study participants.");
         }
     }
 

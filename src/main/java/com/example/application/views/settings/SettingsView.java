@@ -121,9 +121,14 @@ public class SettingsView extends VerticalLayout
 
         Notification successNotification = Notification.show("Configuration saved successfully.");
         successNotification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+        if(testConnection())
+        {
+            setServer();
+        }
     }
 
-    private void testConnection()
+    private boolean testConnection()
     {
         if (service.getLampServerAddress() == null ||
                 service.getLampAccessKey() == null ||
@@ -132,7 +137,7 @@ public class SettingsView extends VerticalLayout
             Notification errorNotification = Notification.show("One of the connection parameters is not set.");
             errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
 
-            return;
+            return false;
         }
 
         ProcessBuilder processBuilder = new ProcessBuilder("python3",
@@ -152,13 +157,8 @@ public class SettingsView extends VerticalLayout
             errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
 
             e.printStackTrace();
-            return;
+            return false;
         }
-
-        List<String> results = new BufferedReader(
-                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))
-                .lines()
-                .collect(Collectors.toList());
 
         int exitCode;
         try
@@ -171,18 +171,45 @@ public class SettingsView extends VerticalLayout
             errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
 
             e.printStackTrace();
-            return;
+            return false;
         }
 
         if(exitCode == 0)
         {
             Notification successNotification = Notification.show("Connection successful.");
             successNotification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+            return true;
         }
         else
         {
             Notification errorNotification = Notification.show("Connection unsuccessful. Exit code " + exitCode);
             errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+
+            return false;
         }
     }
+
+    private void setServer()
+    {
+        service.setServer();
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
