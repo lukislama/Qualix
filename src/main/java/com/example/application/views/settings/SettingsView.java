@@ -24,6 +24,7 @@ public class SettingsView extends VerticalLayout
 {
     //Form
     final TextField serverAddressField = new TextField("Server address");
+    final TextField studyIdField = new TextField("Study ID");
     final TextField accessKeyField = new TextField("Access key");
     final PasswordField secretKey = new PasswordField("Secret key");
     final Button saveButton = new Button("Save");
@@ -49,6 +50,7 @@ public class SettingsView extends VerticalLayout
     private Component getForm()
     {
         return new VerticalLayout(serverAddressField,
+                studyIdField,
                 accessKeyField,
                 secretKey,
                 saveButton);
@@ -62,10 +64,12 @@ public class SettingsView extends VerticalLayout
     private void configureContent()
     {
         serverAddressField.setRequired(true);
+        studyIdField.setRequired(true);
         accessKeyField.setRequired(true);
         secretKey.setRequired(true);
 
         serverAddressField.setPlaceholder(service.getLampServerAddress());
+        studyIdField.setPlaceholder(service.getLampStudyId());
         accessKeyField.setPlaceholder(service.getLampAccessKey());
 
         saveButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
@@ -81,6 +85,16 @@ public class SettingsView extends VerticalLayout
             serverAddressField.setInvalid(true);
 
             Notification errorNotification = Notification.show("Server address field is empty.");
+            errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
+
+            return;
+        }
+
+        if(studyIdField.isEmpty())
+        {
+            studyIdField.setInvalid(true);
+
+            Notification errorNotification = Notification.show("Study ID field is empty.");
             errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
 
             return;
@@ -107,10 +121,12 @@ public class SettingsView extends VerticalLayout
         }
 
         serverAddressField.setInvalid(false);
+        studyIdField.setInvalid(false);
         accessKeyField.setInvalid(false);
         secretKey.setInvalid(false);
 
         service.setLampServerAddress(serverAddressField.getValue());
+        service.setLampStudyId(studyIdField.getValue());
         service.setLampAccessKey(accessKeyField.getValue());
         service.setLampSecretKey(secretKey.getValue());
 
@@ -127,7 +143,8 @@ public class SettingsView extends VerticalLayout
     {
         if (service.getLampServerAddress() == null ||
                 service.getLampAccessKey() == null ||
-                service.getLampSecretKey() == null)
+                service.getLampSecretKey() == null ||
+                service.getLampStudyId() == null)
         {
             Notification errorNotification = Notification.show("One of the connection parameters is not set.");
             errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
@@ -139,7 +156,8 @@ public class SettingsView extends VerticalLayout
                 "test_connection.py",
                 service.getLampAccessKey(),
                 service.getLampSecretKey(),
-                service.getLampServerAddress());
+                service.getLampServerAddress(),
+                service.getLampStudyId());
 
         Process process;
         try

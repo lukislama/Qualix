@@ -27,7 +27,7 @@ public class CrmService
     private final StatusRepository statusRepository;
     private final DataRepository dataRepository;
     private final DataPointRepository dataPointRepository;
-    private String lampServerAddress, lampAccessKey, lampSecretKey;
+    private String lampServerAddress, lampAccessKey, lampSecretKey, lampStudyId;
     private boolean serverSet;
 
     public CrmService(ContactRepository contactRepository,
@@ -186,7 +186,8 @@ public class CrmService
                 "get_study_participants.py",
                 lampAccessKey,
                 lampSecretKey,
-                lampServerAddress);
+                lampServerAddress,
+                lampStudyId);
 
         Process process;
         try
@@ -370,5 +371,15 @@ public class CrmService
     public void setLampSecretKey(String lampSecretKey)
     {
         this.lampSecretKey = lampSecretKey;
+    }
+
+    public String getLampStudyId()
+    {
+        return lampStudyId;
+    }
+
+    public void setLampStudyId(String lampStudyId)
+    {
+        this.lampStudyId = lampStudyId;
     }
 }
