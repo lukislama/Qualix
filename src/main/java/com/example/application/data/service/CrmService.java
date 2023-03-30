@@ -16,7 +16,9 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -222,9 +224,18 @@ public class CrmService
 
         if(exitCode == 0)
         {
+            Set<String> savedContactIds = findAllContacts("")
+                    .stream()
+                    .map(Contact::getStudyId).collect(Collectors.toSet());
+
             Contact contact;
             for (String participantId : results)
             {
+                if (savedContactIds.contains(participantId))
+                {
+                    continue;
+                }
+
                 contact = new Contact();
                 contact.setStudyId(participantId);
                 contact.setFirstName("Change me");
