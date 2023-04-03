@@ -1,5 +1,6 @@
 package com.example.application.views;
 
+import com.example.application.security.SecurityService;
 import com.example.application.views.dashboard.DashboardView;
 import com.example.application.views.list.ListView;
 import com.example.application.views.settings.SettingsView;
@@ -13,26 +14,23 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.router.HighlightConditions;
 import com.vaadin.flow.router.RouterLink;
-import com.vaadin.flow.spring.security.AuthenticationContext;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.annotation.PostConstruct;
-import java.util.Optional;
 
 public class MainLayout extends AppLayout
 {
-    private final transient AuthenticationContext authenticationContext;
+    private final SecurityService securityService;
 
-    private UserDetails userDetails;
+    private final UserDetails userDetails;
 
-    public MainLayout(AuthenticationContext authenticationContext)
+    public MainLayout(SecurityService securityService)
     {
-        this.authenticationContext = authenticationContext;
+        this.securityService = securityService;
 
-        Optional<UserDetails> optionalUserDetails = authenticationContext.getAuthenticatedUser(UserDetails.class);
-        optionalUserDetails.ifPresent(details -> userDetails = details);
+        userDetails = securityService.getAuthenticatedUser();
 
-        if(optionalUserDetails.isEmpty())
+        if(userDetails == null)
         {
             System.err.println("User detail is not set, this should never happen.");
         }
@@ -51,20 +49,12 @@ public class MainLayout extends AppLayout
         logo.addClassNames("text-l", "m-m");
         HorizontalLayout header;
 
-        if (authenticationContext.isAuthenticated())
-        {
-            Button logout = new Button("Log out", e -> authenticationContext.logout());
-            Span loggedUser = new Span("Welcome " + userDetails.getUsername());
-            header = new HorizontalLayout(new DrawerToggle(),
-                    logo,
-                    loggedUser,
-                    logout);
-        }
-        else
-        {
-            header = new HorizontalLayout(new DrawerToggle(),
-                    logo);
-        }
+        Button logout = new Button("Log out", e -> securityService.logout());
+        Span loggedUser = new Span("Welcome " + userDetails.getUsername());
+        header = new HorizontalLayout(new DrawerToggle(),
+                logo,
+                loggedUser,
+                logout);
 
         header.setDefaultVerticalComponentAlignment(FlexComponent.Alignment.CENTER);
         header.expand(logo);
@@ -75,8 +65,7 @@ public class MainLayout extends AppLayout
     }
     private void createDrawer()
     {
-        if(authenticationContext.isAuthenticated()
-        && userDetails.getAuthorities().stream()
+        if(userDetails.getAuthorities().stream()
                 .anyMatch(r -> r.getAuthority().equals("ROLE_ADMIN")))
         {
             RouterLink listView = new RouterLink("List", ListView.class);

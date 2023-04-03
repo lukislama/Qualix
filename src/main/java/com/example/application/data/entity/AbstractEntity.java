@@ -1,10 +1,10 @@
 package com.example.application.data.entity;
 
-import org.hibernate.annotations.Type;
+import org.hibernate.annotations.JdbcTypeCode;
 
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
+import jakarta.persistence.MappedSuperclass;
 import java.util.UUID;
 
 @MappedSuperclass
@@ -13,7 +13,7 @@ public abstract class AbstractEntity
 
     @Id
     @GeneratedValue
-    @Type(type = "uuid-char")
+    @JdbcTypeCode(java.sql.Types.VARCHAR)
     private UUID id;
 
     public UUID getId()

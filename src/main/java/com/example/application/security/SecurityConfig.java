@@ -8,18 +8,20 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.userdetails.User;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
-import org.springframework.security.provisioning.UserDetailsManager;
 
 @EnableWebSecurity
 @Configuration
 public class SecurityConfig extends VaadinWebSecurity
 {
     @Override
-    protected void configure(HttpSecurity http) throws Exception
+    public void configure(HttpSecurity http) throws Exception
     {
-        http.authorizeRequests().antMatchers("/public/**").permitAll();
+        http.authorizeHttpRequests()
+                .requestMatchers(("/public/**")).permitAll();
 
         super.configure(http);
 
@@ -33,19 +35,23 @@ public class SecurityConfig extends VaadinWebSecurity
     }
 
     @Bean
-    public UserDetailsManager userDetailsService()
+    public PasswordEncoder passwordEncoder()
     {
-        UserDetails user =
-                User.withUsername("user")
-                        .password("{noop}user")
-                        .roles("USER")
-                        .build();
-        UserDetails admin =
-                User.withUsername("admin")
-                        .password("{noop}admin")
-                        .roles("ADMIN")
-                        .build();
+        return new BCryptPasswordEncoder();
+    }
 
-        return new InMemoryUserDetailsManager(user, admin);
+    @Bean
+    public UserDetailsService userDetailsService(
+            PasswordEncoder passwordEncoder)
+    {
+        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
+        manager.createUser(User.withUsername("user")
+                .password(passwordEncoder.encode("user"))
+                .roles("USER").build());
+        manager.createUser(User.withUsername("admin")
+                .password(passwordEncoder.encode("admin"))
+                .roles("USER", "ADMIN").build());
+
+        return manager;
     }
 }

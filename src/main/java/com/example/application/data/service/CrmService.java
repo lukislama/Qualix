@@ -16,7 +16,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
@@ -255,6 +254,8 @@ public class CrmService
             System.err.println("An error occurred while getting study participants.");
         }
     }
+
+
 
     public List<Data> findAllData(String stringFilter)
     {

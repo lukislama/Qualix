@@ -1,11 +1,11 @@
 package com.example.application;
 
-import com.vaadin.flow.component.dependency.NpmPackage;
 import com.vaadin.flow.component.page.AppShellConfigurator;
 import com.vaadin.flow.server.PWA;
 import com.vaadin.flow.theme.Theme;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 /**
  * The entry point of the Spring Boot application.
@@ -14,8 +14,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * and some desktop browsers.
  */
 @SpringBootApplication
+@EnableScheduling
 @Theme(value = "flowcrmtutorial")
-@NpmPackage(value = "line-awesome", version = "1.3.0")
 @PWA(
         name = "LAMPView",
         shortName = "LAMPView",
