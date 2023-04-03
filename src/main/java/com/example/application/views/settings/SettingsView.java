@@ -1,6 +1,7 @@
 package com.example.application.views.settings;
 
 import com.example.application.data.service.CrmService;
+import com.example.application.data.service.ProcessReturn;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -15,7 +16,8 @@ import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
 import jakarta.annotation.security.RolesAllowed;
-import java.io.IOException;
+
+import static com.example.application.data.service.Utilities.createAndRunProcess;
 
 @PageTitle("Settings | LAMPVIew")
 @Route(value = "settings", layout = MainLayout.class)
@@ -152,42 +154,14 @@ public class SettingsView extends VerticalLayout
             return false;
         }
 
-        ProcessBuilder processBuilder = new ProcessBuilder("python3",
+        ProcessReturn processReturn = createAndRunProcess("python3",
                 "test_connection.py",
                 service.getLampAccessKey(),
                 service.getLampSecretKey(),
                 service.getLampServerAddress(),
                 service.getLampStudyId());
 
-        Process process;
-        try
-        {
-            process = processBuilder.start();
-        }
-        catch (IOException e)
-        {
-            Notification errorNotification = Notification.show("An error occurred while testing connection.");
-            errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-
-            e.printStackTrace();
-            return false;
-        }
-
-        int exitCode;
-        try
-        {
-            exitCode = process.waitFor();
-        }
-        catch (InterruptedException e)
-        {
-            Notification errorNotification = Notification.show("An error occurred while testing connection.");
-            errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
-
-            e.printStackTrace();
-            return false;
-        }
-
-        if(exitCode == 0)
+        if(processReturn.getExitCode() == 0)
         {
             Notification successNotification = Notification.show("Connection successful.");
             successNotification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
@@ -196,7 +170,7 @@ public class SettingsView extends VerticalLayout
         }
         else
         {
-            Notification errorNotification = Notification.show("Connection unsuccessful. Exit code " + exitCode);
+            Notification errorNotification = Notification.show("Connection unsuccessful. Exit code " + processReturn.getExitCode());
             errorNotification.addThemeVariants(NotificationVariant.LUMO_ERROR);
 
             return false;

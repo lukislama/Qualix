@@ -10,16 +10,14 @@ import com.example.application.data.repository.DataRepository;
 import com.example.application.data.repository.StatusRepository;
 import org.springframework.stereotype.Service;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
+
+import static com.example.application.data.service.Utilities.createAndRunProcess;
 
 @Service
 public class CrmService
@@ -183,52 +181,21 @@ public class CrmService
 
     private void getStudyParticipants()
     {
-        ProcessBuilder processBuilder = new ProcessBuilder("python3",
+        ProcessReturn processReturn = createAndRunProcess("python3",
                 "get_study_participants.py",
                 lampAccessKey,
                 lampSecretKey,
                 lampServerAddress,
                 lampStudyId);
 
-        Process process;
-        try
-        {
-            process = processBuilder.start();
-        }
-        catch (IOException e)
-        {
-            System.err.println("An error occurred while getting study participants.");
-
-            e.printStackTrace();
-            return;
-        }
-
-        List<String> results = new BufferedReader(
-                new InputStreamReader(process.getInputStream(), StandardCharsets.UTF_8))
-                .lines()
-                .collect(Collectors.toList());
-
-        int exitCode;
-        try
-        {
-            exitCode = process.waitFor();
-        }
-        catch (InterruptedException e)
-        {
-            System.err.println("An error occurred while getting study participants.");
-
-            e.printStackTrace();
-            return;
-        }
-
-        if(exitCode == 0)
+        if(processReturn.getExitCode() == 0)
         {
             Set<String> savedContactIds = findAllContacts("")
                     .stream()
                     .map(Contact::getStudyId).collect(Collectors.toSet());
 
             Contact contact;
-            for (String participantId : results)
+            for (String participantId : processReturn.getResults())
             {
                 if (savedContactIds.contains(participantId))
                 {
@@ -243,7 +210,7 @@ public class CrmService
                 contact.setPhoneNum("0000000000");
                 contact.setStatus(findAllStatuses().stream()
                         .filter(e -> e.getName().equals("In study"))
-                        .collect(Collectors.toList())
+                        .toList()
                         .get(0));
 
                 this.saveContact(contact);
@@ -254,8 +221,6 @@ public class CrmService
             System.err.println("An error occurred while getting study participants.");
         }
     }
-
-
 
     public List<Data> findAllData(String stringFilter)
     {
