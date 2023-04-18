@@ -81,3 +81,7 @@ target/
 .DS_Store
 .idea/
 frontend/generated
+**.ts
+tsconfig.json
+package-lock.json
+package.json
