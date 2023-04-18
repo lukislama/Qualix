@@ -7,5 +7,6 @@ RUN pip install --no-cache-dir --upgrade pip && \
 COPY target/*.jar app.jar
 COPY src/main/resources/python/test_connection.py .
 COPY src/main/resources/python/get_study_participants.py .
+COPY src/main/resources/python/get_participant_last_data_time.py .
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app.jar"]

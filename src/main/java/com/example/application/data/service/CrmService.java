@@ -8,12 +8,16 @@ import com.example.application.data.repository.ContactRepository;
 import com.example.application.data.repository.DataPointRepository;
 import com.example.application.data.repository.DataRepository;
 import com.example.application.data.repository.StatusRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.time.Duration;
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.time.LocalDateTime;
+import java.time.ZoneOffset;
+import java.util.*;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
@@ -43,7 +47,7 @@ public class CrmService
 
         saveStatuses();
 
-        //generateData();
+        generateData();
     }
 
     private void saveStatuses()
@@ -80,7 +84,6 @@ public class CrmService
 
             dataList.add(data);
         }
-
 
         //Contact + status generation
         List<Status> statuses = new ArrayList<>();
@@ -195,6 +198,7 @@ public class CrmService
                     .map(Contact::getStudyId).collect(Collectors.toSet());
 
             Contact contact;
+            Data data;
             for (String participantId : processReturn.getResults())
             {
                 if (savedContactIds.contains(participantId))
@@ -213,12 +217,169 @@ public class CrmService
                         .toList()
                         .get(0));
 
-                this.saveContact(contact);
+                data = new Data();
+                data.setGPS("⚫");
+                data.setAccelerometer("⚫");
+                data.setDisplay("⚫");
+                data.setDeviceMotion("⚫");
+                data.setParticipantStudyId(participantId);
+                data.setContact(contact);
+
+                this.saveData(data);
             }
         }
         else
         {
             System.err.println("An error occurred while getting study participants.");
+        }
+    }
+
+    @Scheduled(cron = "0 0 9 * * ?")
+    private void getDataQualityForPreviousDay()
+    {
+        if (serverSet)
+        {
+            ProcessReturn processReturn;
+            LocalDateTime date, currentDate;
+            Duration timeDifference;
+            DataPoint dataPoint;
+            long hoursDifference;
+
+            List<Contact> contacts = findAllContacts("");
+            for (Contact contact : contacts)
+            {
+                currentDate = LocalDateTime.now();
+
+                System.out.println("Patient: " + contact.getStudyId());
+
+                processReturn = createAndRunProcess("python3",
+                        "get_participant_last_data_time.py",
+                        lampAccessKey,
+                        lampSecretKey,
+                        lampServerAddress,
+                        contact.getStudyId());
+
+                if(processReturn.getResults().size() == 0)
+                {
+                    System.out.println("Skipping");
+                    continue;
+                }
+
+                dataPoint = new DataPoint();
+                dataPoint.setParticipantStudyId(contact.getStudyId());
+                dataPoint.setDate(currentDate.toLocalDate().toString());
+                dataPoint.setData(contact.getData());
+
+                date = LocalDateTime.ofEpochSecond(
+                        Long.parseLong(processReturn.getResults().get(0)) / 1000,
+                        0,
+                        ZoneOffset.UTC);
+                timeDifference = Duration.between(date, currentDate);
+                hoursDifference = timeDifference.toHours();
+
+                if(hoursDifference <= 2)
+                {
+                    dataPoint.setGPS("🟢");
+                }
+                else if(hoursDifference <= 12)
+                {
+                    dataPoint.setGPS("🟡");
+                }
+                else
+                {
+                    dataPoint.setGPS("🔴");
+                }
+
+                date = LocalDateTime.ofEpochSecond(
+                        Long.parseLong(processReturn.getResults().get(1)) / 1000,
+                        0,
+                        ZoneOffset.UTC);
+                timeDifference = Duration.between(date, currentDate);
+                hoursDifference = timeDifference.toHours();
+
+                if(hoursDifference <= 2)
+                {
+                    dataPoint.setAccelerometer("🟢");
+                }
+                else if(hoursDifference <= 12)
+                {
+                    dataPoint.setAccelerometer("🟡");
+                }
+                else
+                {
+                    dataPoint.setAccelerometer("🔴");
+                }
+
+                date = LocalDateTime.ofEpochSecond(
+                        Long.parseLong(processReturn.getResults().get(2)) / 1000,
+                        0,
+                        ZoneOffset.UTC);
+                timeDifference = Duration.between(date, currentDate);
+                hoursDifference = timeDifference.toHours();
+
+                if(hoursDifference <= 2)
+                {
+                    dataPoint.setDisplay("🟢");
+                }
+                else if(hoursDifference <= 12)
+                {
+                    dataPoint.setDisplay("🟡");
+                }
+                else
+                {
+                    dataPoint.setDisplay("🔴");
+                }
+
+                date = LocalDateTime.ofEpochSecond(
+                        Long.parseLong(processReturn.getResults().get(3)) / 1000,
+                        0,
+                        ZoneOffset.UTC);
+                timeDifference = Duration.between(date, currentDate);
+                hoursDifference = timeDifference.toHours();
+
+                if(hoursDifference <= 2)
+                {
+                    dataPoint.setDeviceMotion("🟢");
+                }
+                else if(hoursDifference <= 12)
+                {
+                    dataPoint.setDeviceMotion("🟡");
+                }
+                else
+                {
+                    dataPoint.setDeviceMotion("🔴");
+                }
+
+                this.saveDataPoint(dataPoint);
+            }
+
+            recolorData();
+        }
+    }
+
+    private void recolorData()
+    {
+        List<Contact> contactList = contactRepository.findAll();
+        Data data;
+        List<DataPoint> dataPoints;
+        for (Contact contact : contactList)
+        {
+            data = contact.getData();
+
+            dataPoints = data.getDataPoints()
+                    .stream()
+                    .filter(e -> e.getDate().equals(LocalDate.now().toString()))
+                    .toList();
+
+            if(dataPoints.size() > 0)
+            {
+                data.setGPS(dataPoints.get(0).getGPS());
+                data.setAccelerometer(dataPoints.get(0).getAccelerometer());
+                data.setDisplay(dataPoints.get(0).getDisplay());
+                data.setDeviceMotion(dataPoints.get(0).getDeviceMotion());
+            }
+
+            this.saveData(data);
         }
     }
 
