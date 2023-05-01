@@ -9,9 +9,9 @@ this application the study staff can:
 ## Implemented features
 
 - See the participants of a study and their contact information
-- Quickly check the data quality of collected data
+- Quickly check the data quality of collected data 
+- Receive email notifications regarding the data quality
 
 ## Planned features
 
-- Receive email notifications regarding the data quality
 - Generate graphs using collected data

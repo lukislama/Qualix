@@ -5,8 +5,8 @@ from datetime import datetime, timezone, timedelta
 
 LAMP.connect(sys.argv[1], sys.argv[2], sys.argv[3])
 
-TIMESTAMP_NOW = datetime.now()
-TIMESTAMP_LIMIT = TIMESTAMP_NOW
+TIMESTAMP_NOW = datetime(2023, 4, 15, 00, 00, 00)
+TIMESTAMP_LIMIT = TIMESTAMP_NOW - timedelta(days=1)
 
 # GPS
 

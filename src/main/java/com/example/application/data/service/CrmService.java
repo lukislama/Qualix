@@ -20,6 +20,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import static com.example.application.data.service.Utilities.createAndRunProcess;
+import static com.example.application.data.service.Utilities.sendEmail;
 
 @Service
 public class CrmService
@@ -28,8 +29,11 @@ public class CrmService
     private final StatusRepository statusRepository;
     private final DataRepository dataRepository;
     private final DataPointRepository dataPointRepository;
+    //LAMP server settings
     private String lampServerAddress, lampAccessKey, lampSecretKey, lampStudyId;
-    private boolean serverSet;
+    //Email settings
+    private String recipientEmailAddress, googleEmailAddress, googleAppPassword;
+    private boolean serverSet, emailSet;
 
     public CrmService(ContactRepository contactRepository,
                       StatusRepository statusRepository,
@@ -42,10 +46,12 @@ public class CrmService
         this.dataPointRepository = dataPointRepository;
 
         serverSet = false;
+        emailSet = false;
 
         saveStatuses();
 
-        generateData();
+        //generateData();
+        //generateTableForEmail();
     }
 
     private void saveStatuses()
@@ -173,6 +179,18 @@ public class CrmService
         }
     }
 
+    public boolean setEmail()
+    {
+        emailSet = true;
+
+        return sendEmail(googleEmailAddress,
+                googleAppPassword,
+                recipientEmailAddress,
+                "Receiving email set.",
+                "You email has been set to receive notifications from the LAMPView application.\n" +
+                        "If you think this is a mistake, please contact the study administrators at " + googleEmailAddress);
+    }
+
     public void setServer()
     {
         serverSet = true;
@@ -238,7 +256,7 @@ public class CrmService
         if (serverSet)
         {
             ProcessReturn processReturn;
-            LocalDateTime date, currentDate;
+            LocalDateTime date, currentDate = LocalDateTime.now();
             Duration timeDifference;
             DataPoint dataPoint;
             long hoursDifference;
@@ -246,8 +264,6 @@ public class CrmService
             List<Contact> contacts = findAllContacts("");
             for (Contact contact : contacts)
             {
-                currentDate = LocalDateTime.now();
-
                 System.out.println("Patient: " + contact.getStudyId());
 
                 processReturn = createAndRunProcess("python3",
@@ -352,6 +368,17 @@ public class CrmService
             }
 
             recolorData();
+
+            if (emailSet)
+            {
+                sendEmail(googleEmailAddress,
+                        googleAppPassword,
+                        recipientEmailAddress,
+                        "LAMPView report " + currentDate.toLocalDate(),
+                        generateTableForEmail());
+
+                System.out.println("Notification email send.");
+            }
         }
     }
 
@@ -379,6 +406,50 @@ public class CrmService
 
             this.saveData(data);
         }
+    }
+
+    private String generateTableForEmail()
+    {
+        List<Contact> contactList = contactRepository.findAll();
+        Data data;
+        String[][] tableValues = new String[contactList.size()][4];
+        String returnString = "";
+
+        for (int i = 0; i < contactList.size(); i++)
+        {
+            data = contactList.get(i).getData();
+
+            tableValues[i][0] = data.getGPS();
+            tableValues[i][1] = data.getAccelerometer();
+            tableValues[i][2] = data.getDisplay();
+            tableValues[i][3] = data.getDeviceMotion();
+        }
+
+        /*returnString += "ID\tGPS\tAccelerometer\tDisplay\tDevice motion\n";
+        for (int i = 0; i < contactList.size(); i++)
+        {
+            returnString += contactList.get(i).getStudyId() + "\t"
+                    + tableValues[i][0] + "\t"
+                    + tableValues[i][1] + "\t"
+                    + tableValues[i][2] + "\t"
+                    + tableValues[i][3] + "\n";
+        }
+
+        return returnString;*/
+
+        returnString = new Utilities.TableBuilder()
+                .addHeaders("GPS", "Accelerometer", "Display", "Device motion")
+                .setValues(tableValues)
+                .addRowNames(contactList.stream()
+                        .map(Contact::getStudyId)
+                        .toArray(String[]::new))
+                .setBorders(Utilities.TableBuilder.Borders.HEADER_ROW_PLAIN)
+                .setName("ID")
+                .frame(false)
+                .build();
+
+        System.out.println(returnString);
+        return returnString;
     }
 
     public List<Data> findAllData(String stringFilter)
@@ -517,5 +588,40 @@ public class CrmService
     public void setLampStudyId(String lampStudyId)
     {
         this.lampStudyId = lampStudyId;
+    }
+
+    public String getRecipientEmailAddress()
+    {
+        return recipientEmailAddress;
+    }
+
+    public void setRecipientEmailAddress(String recipientEmailAddress)
+    {
+        this.recipientEmailAddress = recipientEmailAddress;
+    }
+
+    public String getGoogleEmailAddress()
+    {
+        return googleEmailAddress;
+    }
+
+    public void setGoogleEmailAddress(String googleEmailAddress)
+    {
+        this.googleEmailAddress = googleEmailAddress;
+    }
+
+    public String getGoogleAppPassword()
+    {
+        return googleAppPassword;
+    }
+
+    public void setGoogleAppPassword(String googleAppPassword)
+    {
+        this.googleAppPassword = googleAppPassword;
+    }
+
+    public boolean isServerSet()
+    {
+        return serverSet;
     }
 }
