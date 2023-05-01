@@ -121,6 +121,7 @@ public class SettingsView extends VerticalLayout
         emailAddressField.setRequired(true);
         googleAppPasswordField.setRequired(true);
 
+        recipientEmailField.setPlaceholder(service.getRecipientEmailAddress());
         emailAddressField.setPlaceholder(service.getGoogleEmailAddress());
 
         saveGoogleCredentialsButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);

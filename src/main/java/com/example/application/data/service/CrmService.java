@@ -46,6 +46,21 @@ public class CrmService
 
         saveStatuses();
 
+        if(appConfig.isServerSet())
+        {
+            getStudyParticipants();
+        }
+
+        if(appConfig.isEmailSet())
+        {
+            sendEmail(appConfig.getGoogleEmailAddress(),
+                    appConfig.getGoogleAppPassword(),
+                    appConfig.getRecipientEmailAddress(),
+                    "Receiving email set.",
+                    "You email has been set to receive notifications from the LAMPView application.\n" +
+                            "If you think this is a mistake, please contact the study administrators at " + appConfig.getGoogleEmailAddress());
+        }
+
         //generateData();
         //generateTableForEmail();
     }
@@ -246,7 +261,7 @@ public class CrmService
         }
     }
 
-    @Scheduled(cron = "0 0 9 * * ?")
+    @Scheduled(fixedDelay = 60000)
     private void getDataQualityForPreviousDay()
     {
         if (appConfig.isServerSet())
