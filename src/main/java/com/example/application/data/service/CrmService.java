@@ -29,24 +29,20 @@ public class CrmService
     private final StatusRepository statusRepository;
     private final DataRepository dataRepository;
     private final DataPointRepository dataPointRepository;
-    //LAMP server settings
-    private String lampServerAddress, lampAccessKey, lampSecretKey, lampStudyId;
-    //Email settings
-    private String recipientEmailAddress, googleEmailAddress, googleAppPassword;
-    private boolean serverSet, emailSet;
+
+    private final AppConfig appConfig;
 
     public CrmService(ContactRepository contactRepository,
                       StatusRepository statusRepository,
                       DataRepository dataRepository,
-                      DataPointRepository dataPointRepository)
+                      DataPointRepository dataPointRepository,
+                      AppConfig appConfig)
     {
         this.contactRepository = contactRepository;
         this.statusRepository = statusRepository;
         this.dataRepository = dataRepository;
         this.dataPointRepository = dataPointRepository;
-
-        serverSet = false;
-        emailSet = false;
+        this.appConfig = appConfig;
 
         saveStatuses();
 
@@ -181,19 +177,19 @@ public class CrmService
 
     public boolean setEmail()
     {
-        emailSet = true;
+        appConfig.setEmailSet(true);
 
-        return sendEmail(googleEmailAddress,
-                googleAppPassword,
-                recipientEmailAddress,
+        return sendEmail(appConfig.getGoogleEmailAddress(),
+                appConfig.getGoogleAppPassword(),
+                appConfig.getRecipientEmailAddress(),
                 "Receiving email set.",
                 "You email has been set to receive notifications from the LAMPView application.\n" +
-                        "If you think this is a mistake, please contact the study administrators at " + googleEmailAddress);
+                        "If you think this is a mistake, please contact the study administrators at " + appConfig.getGoogleEmailAddress());
     }
 
     public void setServer()
     {
-        serverSet = true;
+        appConfig.setServerSet(true);
 
         getStudyParticipants();
     }
@@ -202,10 +198,10 @@ public class CrmService
     {
         ProcessReturn processReturn = createAndRunProcess("python3",
                 "get_study_participants.py",
-                lampAccessKey,
-                lampSecretKey,
-                lampServerAddress,
-                lampStudyId);
+                appConfig.getLampAccessKey(),
+                appConfig.getLampSecretKey(),
+                appConfig.getLampServerAddress(),
+                appConfig.getLampStudyId());
 
         if(processReturn.getExitCode() == 0)
         {
@@ -253,7 +249,7 @@ public class CrmService
     @Scheduled(cron = "0 0 9 * * ?")
     private void getDataQualityForPreviousDay()
     {
-        if (serverSet)
+        if (appConfig.isServerSet())
         {
             ProcessReturn processReturn;
             LocalDateTime date, currentDate = LocalDateTime.now();
@@ -268,9 +264,9 @@ public class CrmService
 
                 processReturn = createAndRunProcess("python3",
                         "get_participant_last_data_time.py",
-                        lampAccessKey,
-                        lampSecretKey,
-                        lampServerAddress,
+                        appConfig.getLampAccessKey(),
+                        appConfig.getLampSecretKey(),
+                        appConfig.getLampServerAddress(),
                         contact.getStudyId());
 
                 if(processReturn.getResults().size() == 0)
@@ -369,11 +365,11 @@ public class CrmService
 
             recolorData();
 
-            if (emailSet)
+            if (appConfig.isEmailSet())
             {
-                sendEmail(googleEmailAddress,
-                        googleAppPassword,
-                        recipientEmailAddress,
+                sendEmail(appConfig.getGoogleEmailAddress(),
+                        appConfig.getGoogleAppPassword(),
+                        appConfig.getRecipientEmailAddress(),
                         "LAMPView report " + currentDate.toLocalDate(),
                         generateTableForEmail());
 
@@ -413,7 +409,7 @@ public class CrmService
         List<Contact> contactList = contactRepository.findAll();
         Data data;
         String[][] tableValues = new String[contactList.size()][4];
-        String returnString = "";
+        String returnString;
 
         for (int i = 0; i < contactList.size(); i++)
         {
@@ -552,76 +548,76 @@ public class CrmService
 
     public String getLampServerAddress()
     {
-        return lampServerAddress;
+        return appConfig.getLampServerAddress();
     }
 
     public void setLampServerAddress(String lampServerAddress)
     {
-        this.lampServerAddress = lampServerAddress;
+        appConfig.setLampServerAddress(lampServerAddress);
     }
 
     public String getLampAccessKey()
     {
-        return lampAccessKey;
+        return appConfig.getLampAccessKey();
     }
 
     public void setLampAccessKey(String lampAccessKey)
     {
-        this.lampAccessKey = lampAccessKey;
+        appConfig.setLampAccessKey(lampAccessKey);
     }
 
     public String getLampSecretKey()
     {
-        return lampSecretKey;
+        return appConfig.getLampSecretKey();
     }
 
     public void setLampSecretKey(String lampSecretKey)
     {
-        this.lampSecretKey = lampSecretKey;
+        appConfig.setLampSecretKey(lampSecretKey);
     }
 
     public String getLampStudyId()
     {
-        return lampStudyId;
+        return appConfig.getLampStudyId();
     }
 
     public void setLampStudyId(String lampStudyId)
     {
-        this.lampStudyId = lampStudyId;
+        appConfig.setLampStudyId(lampStudyId);
     }
 
     public String getRecipientEmailAddress()
     {
-        return recipientEmailAddress;
+        return appConfig.getRecipientEmailAddress();
     }
 
     public void setRecipientEmailAddress(String recipientEmailAddress)
     {
-        this.recipientEmailAddress = recipientEmailAddress;
+        appConfig.setRecipientEmailAddress(recipientEmailAddress);
     }
 
     public String getGoogleEmailAddress()
     {
-        return googleEmailAddress;
+        return appConfig.getGoogleEmailAddress();
     }
 
     public void setGoogleEmailAddress(String googleEmailAddress)
     {
-        this.googleEmailAddress = googleEmailAddress;
+        appConfig.setGoogleEmailAddress(googleEmailAddress);
     }
 
     public String getGoogleAppPassword()
     {
-        return googleAppPassword;
+        return appConfig.getGoogleAppPassword();
     }
 
     public void setGoogleAppPassword(String googleAppPassword)
     {
-        this.googleAppPassword = googleAppPassword;
+        appConfig.setGoogleAppPassword(googleAppPassword);
     }
 
     public boolean isServerSet()
     {
-        return serverSet;
+        return appConfig.isServerSet();
     }
 }
