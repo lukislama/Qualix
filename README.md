@@ -11,7 +11,6 @@ this application the study staff can:
 - See the participants of a study and their contact information
 - Quickly check the data quality of collected data 
 - Receive email notifications regarding the data quality
+- Generate graphs using collected data
 
 ## Planned features
-
-- Generate graphs using collected data
