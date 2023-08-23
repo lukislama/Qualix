@@ -4,6 +4,7 @@ import com.example.application.security.SecurityService;
 import com.example.application.views.dashboard.DashboardView;
 import com.example.application.views.list.ListView;
 import com.example.application.views.settings.SettingsView;
+import com.example.application.views.visualizations.VisualizationsView;
 import com.vaadin.flow.component.applayout.AppLayout;
 import com.vaadin.flow.component.applayout.DrawerToggle;
 import com.vaadin.flow.component.button.Button;
@@ -74,12 +75,14 @@ public class MainLayout extends AppLayout
             addToDrawer(new VerticalLayout(
                     new RouterLink("Dashboard", DashboardView.class),
                     listView,
-                    new RouterLink("Settings", SettingsView.class)));
+                    new RouterLink("Settings", SettingsView.class),
+                    new RouterLink("Visualizations", VisualizationsView.class)));
         }
         else
         {
             addToDrawer(new VerticalLayout(
-                    new RouterLink("Dashboard", DashboardView.class)));
+                    new RouterLink("Dashboard", DashboardView.class),
+                    new RouterLink("Visualizations", VisualizationsView.class)));
         }
     }
 }
