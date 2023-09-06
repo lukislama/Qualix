@@ -1,4 +1,5 @@
 FROM eclipse-temurin:17
+ENV TZ="Europe/Prague"
 RUN set -xe \
     && apt-get update -y \
     && apt-get install -y python3-pip

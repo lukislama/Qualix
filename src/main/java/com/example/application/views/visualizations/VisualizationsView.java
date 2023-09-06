@@ -4,6 +4,7 @@ import com.example.application.data.entity.Contact;
 import com.example.application.data.service.CrmService;
 import com.example.application.data.service.ProcessReturn;
 import com.example.application.views.MainLayout;
+import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -18,6 +19,8 @@ import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
 import com.vaadin.flow.component.progressbar.ProgressBarVariant;
+import com.vaadin.flow.component.radiobutton.RadioButtonGroup;
+import com.vaadin.flow.component.radiobutton.RadioGroupVariant;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.server.StreamResource;
@@ -27,6 +30,9 @@ import jakarta.annotation.security.PermitAll;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 
 import static com.example.application.data.service.Utilities.createAndRunProcess;
 
@@ -37,6 +43,7 @@ public class VisualizationsView extends VerticalLayout
 {
     final ComboBox<String> visualizationType = new ComboBox<>("Visualization type");
     final ComboBox<Contact> patientId = new ComboBox<>("Patient ID");
+    final RadioButtonGroup<String> radioButtonGroup = new RadioButtonGroup<>();
     final DateTimePicker visualizationStart = new DateTimePicker();
     final DateTimePicker visualizationFinish = new DateTimePicker();
     final Button visualizeButton = new Button("Visualize");
@@ -66,6 +73,13 @@ public class VisualizationsView extends VerticalLayout
         patientId.setItemLabelGenerator(Contact::getStudyId);
         patientId.setRequired(true);
 
+        radioButtonGroup.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
+        radioButtonGroup.setLabel("Visualization length");
+        radioButtonGroup.setHelperText("Options longer than 1 hour can take a very long time to finish.");
+        radioButtonGroup.setItems("1 hour", "1 day", "3 days", "7 days", "Custom");
+        radioButtonGroup.addValueChangeListener(this::changeCustomVisualizationVisibility);
+        radioButtonGroup.setValue("1 hour");
+
         visualizationStart.setLabel("Visualization start");
 
         visualizationFinish.setLabel("Visualization finish");
@@ -94,11 +108,67 @@ public class VisualizationsView extends VerticalLayout
 
         return new VerticalLayout(visualizationType,
                 patientId,
+                radioButtonGroup,
                 horizontalLayout,
                 visualizeButton,
                 progressBarLabel,
                 progressBar,
                 progressBarSubLabel);
+    }
+
+    private void changeCustomVisualizationVisibility(AbstractField.ComponentValueChangeEvent<RadioButtonGroup<String>, String> event)
+    {
+        if (event.getValue().equals("Custom"))
+        {
+            visualizationStart.setVisible(true);
+            visualizationFinish.setVisible(true);
+        }
+        else
+        {
+            visualizationStart.setVisible(false);
+            visualizationFinish.setVisible(false);
+        }
+    }
+
+    private LocalDateTime getVisualizationStart()
+    {
+        if (radioButtonGroup.getValue().equals("Custom"))
+        {
+            return visualizationStart.getValue();
+        }
+
+        LocalDateTime returnValue = LocalDateTime.now();
+        switch (radioButtonGroup.getValue())
+        {
+            case "1 hour" ->
+            {
+                return returnValue.minusHours(1);
+            }
+            case "1 day" ->
+            {
+                return returnValue.minusDays(1);
+            }
+            case "3 days" ->
+            {
+                return returnValue.minusDays(3);
+            }
+            case "7 days" ->
+            {
+                return returnValue.minusDays(7);
+            }
+        }
+
+        return returnValue;
+    }
+
+    private LocalDateTime getVisualizationFinish()
+    {
+        if (radioButtonGroup.getValue().equals("Custom"))
+        {
+            return visualizationFinish.getValue();
+        }
+
+        return LocalDateTime.now();
     }
 
     private void visualizeData()
@@ -123,7 +193,8 @@ public class VisualizationsView extends VerticalLayout
             return;
         }
 
-        if (visualizationStart.isEmpty())
+        if (radioButtonGroup.getValue().equals("Custom") &&
+                visualizationStart.isEmpty())
         {
             visualizationStart.setInvalid(true);
 
@@ -133,7 +204,8 @@ public class VisualizationsView extends VerticalLayout
             return;
         }
 
-        if (visualizationFinish.isEmpty())
+        if (radioButtonGroup.getValue().equals("Custom") &&
+                visualizationFinish.isEmpty())
         {
             visualizationFinish.setInvalid(true);
 
@@ -143,7 +215,7 @@ public class VisualizationsView extends VerticalLayout
             return;
         }
 
-        if(visualizationStart.getValue().isAfter(visualizationFinish.getValue()))
+        if(getVisualizationStart().isAfter(getVisualizationFinish()))
         {
 
             visualizationFinish.setInvalid(true);
@@ -165,8 +237,8 @@ public class VisualizationsView extends VerticalLayout
         File image = new File("generated_visualizations/"
                 + patientId.getValue().getStudyId() + "_"
                 + visualizationType.getValue() + "_"
-                + visualizationStart.getValue().toString() + "_"
-                + visualizationFinish.getValue().toString() + ".png");
+                + getVisualizationStart().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")) + "_"
+                + getVisualizationFinish().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")) + ".png");
 
         if (!image.isFile())
         {
@@ -186,8 +258,8 @@ public class VisualizationsView extends VerticalLayout
                     service.getLampServerAddress(),
                     patientId.getValue().getStudyId(),
                     visualizationType.getValue(),
-                    visualizationStart.getValue().toString(),
-                    visualizationFinish.getValue().toString());
+                    getVisualizationStart().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
+                    getVisualizationFinish().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
 
             if (processReturn.getExitCode() == 0)
             {

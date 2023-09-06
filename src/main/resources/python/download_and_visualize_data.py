@@ -43,10 +43,11 @@ match visualization_type:
                     lowest_tst = timestamp
             t_stamp = datetime.utcfromtimestamp(lowest_tst / 1000)
             print("Participant: " + patient_id + " len(data): " + str(len(data)))
-        if len(data) == 0:
-            exit(101)
 
         data = [d for d in data if visualization_start <= d['UTC time'] <= visualization_finish]
+
+        if len(data) == 0:
+            exit(101)
 
         X = [datetime.now()] * len(data)
         Y = [1.1] * len(data)
@@ -91,10 +92,11 @@ match visualization_type:
                     lowest_tst = timestamp
             t_stamp = datetime.utcfromtimestamp(lowest_tst / 1000)
             print("Participant: " + patient_id + " len(data): " + str(len(data)))
-        if len(data) == 0:
-            exit(101)
 
         data = [d for d in data if visualization_start <= d['UTC time'] <= visualization_finish]
+
+        if len(data) == 0:
+            exit(101)
 
         for elem in data:
             elem['UTC time'] = elem['UTC time'].replace(minute=0, second=0, microsecond=0)
