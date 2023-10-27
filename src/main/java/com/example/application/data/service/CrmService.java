@@ -261,7 +261,7 @@ public class CrmService
         }
     }
 
-    @Scheduled(fixedDelay = 60000)
+    @Scheduled(cron = "0 0 3 * * *")
     private void getDataQualityForPreviousDay()
     {
         if (appConfig.isServerSet())
@@ -284,7 +284,7 @@ public class CrmService
                         appConfig.getLampServerAddress(),
                         contact.getStudyId());
 
-                if(processReturn.getResults().size() == 0)
+                if(processReturn.getResults().isEmpty())
                 {
                     System.out.println("Skipping");
                     continue;
@@ -463,6 +463,26 @@ public class CrmService
         return returnString;
     }
 
+    @Scheduled(cron = "0 0 3 * * *")
+    private void consolidateDataCache()
+    {
+        if (appConfig.getStatus() == AppConfig.dataCacheStatus.BUILT)
+        {
+            ProcessReturn processReturn = createAndRunProcess("python3",
+                    "consolidate_data_cache.py",
+                    getLampAccessKey(),
+                    getLampSecretKey(),
+                    getLampServerAddress(),
+                    getLampStudyId());
+
+            if (processReturn.getExitCode() != 0)
+            {
+                System.out.println("An error occurred while generating data cache: Exit code " + processReturn.getExitCode());
+                System.out.println(processReturn.getResults());
+            }
+        }
+    }
+
     public List<Data> findAllData(String stringFilter)
     {
         if (stringFilter == null || stringFilter.isEmpty())
@@ -634,5 +654,15 @@ public class CrmService
     public boolean isServerSet()
     {
         return appConfig.isServerSet();
+    }
+
+    public AppConfig.dataCacheStatus getDataCacheStatus()
+    {
+        return appConfig.getStatus();
+    }
+
+    public void setDataCacheStatus(AppConfig.dataCacheStatus dataCacheStatus)
+    {
+        appConfig.setStatus(dataCacheStatus);
     }
 }

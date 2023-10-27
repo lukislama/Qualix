@@ -6,15 +6,18 @@ import com.example.application.data.service.ProcessReturn;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.AbstractField;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.HtmlComponent;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datetimepicker.DateTimePicker;
-import com.vaadin.flow.component.html.Image;
-import com.vaadin.flow.component.html.NativeLabel;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.dialog.Dialog;
+import com.vaadin.flow.component.html.*;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.progressbar.ProgressBar;
@@ -47,6 +50,8 @@ public class VisualizationsView extends VerticalLayout
     final DateTimePicker visualizationStart = new DateTimePicker();
     final DateTimePicker visualizationFinish = new DateTimePicker();
     final Button visualizeButton = new Button("Visualize");
+    final Button helpButton = new Button(new Icon(VaadinIcon.QUESTION));
+    final Dialog helpDialog = new Dialog();
     final ProgressBar progressBar = new ProgressBar();
     final NativeLabel progressBarLabel = new NativeLabel("Downloading data and generating image...");
     final Span progressBarSubLabel = new Span("Process can take a very long time depending on the amount of data that needs to be processed.");
@@ -75,10 +80,9 @@ public class VisualizationsView extends VerticalLayout
 
         radioButtonGroup.addThemeVariants(RadioGroupVariant.LUMO_VERTICAL);
         radioButtonGroup.setLabel("Visualization length");
-        radioButtonGroup.setHelperText("Options longer than 1 hour can take a very long time to finish.");
-        radioButtonGroup.setItems("1 hour", "1 day", "3 days", "7 days", "Custom");
+        radioButtonGroup.setItems("1 day", "3 days", "5 days", "7 days", "Custom");
         radioButtonGroup.addValueChangeListener(this::changeCustomVisualizationVisibility);
-        radioButtonGroup.setValue("1 hour");
+        radioButtonGroup.setValue("1 day");
 
         visualizationStart.setLabel("Visualization start");
 
@@ -86,6 +90,13 @@ public class VisualizationsView extends VerticalLayout
 
         visualizeButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         visualizeButton.addClickListener(e -> visualizeData());
+
+        helpButton.addThemeVariants(ButtonVariant.LUMO_ICON);
+        helpButton.getElement().setAttribute("aria-label", "Show help dialog");
+        helpButton.addClickListener(e -> helpDialog.open());
+
+        VerticalLayout dialogLayout = createDialogLayout(helpDialog);
+        helpDialog.add(dialogLayout);
 
         progressBarLabel.setId("pblbl");
         progressBarLabel.addClassName(LumoUtility.TextColor.SECONDARY);
@@ -99,18 +110,50 @@ public class VisualizationsView extends VerticalLayout
         progressBar.getElement().setAttribute("aria-describedby", "sublbl");
     }
 
+    private VerticalLayout createDialogLayout(Dialog helpDialog)
+    {
+        H2 headline = new H2("Visualization data cache information");
+        headline.getStyle().set("margin", "var(--lumo-space-m) 0")
+                .set("font-size", "1.5em").set("font-weight", "bold");
+
+        Paragraph paragraph = new Paragraph();
+        paragraph.add("Using the 'Custom' option will not use the data cache and can take a very long time to finish. " +
+                "It is recommended to use the other options instead.");
+        paragraph.add(new HtmlComponent("br"));
+        paragraph.add("While using the data cache, 1 day of data takes about 10 seconds to process.");
+        paragraph.add(new HtmlComponent("br"));
+        paragraph.add("While using the custom option, 1 day of data takes about 360 seconds to process.");
+
+        Button closeButton = new Button("Close");
+        closeButton.addClickListener(e -> helpDialog.close());
+
+        VerticalLayout dialogLayout = new VerticalLayout(headline,
+                paragraph,
+                closeButton);
+        dialogLayout.setPadding(false);
+        dialogLayout.setAlignItems(FlexComponent.Alignment.STRETCH);
+        dialogLayout.getStyle().set("width", "500px").set("max-width", "100%");
+        dialogLayout.setAlignSelf(FlexComponent.Alignment.END, closeButton);
+
+        return dialogLayout;
+    }
+
     private Component getContent()
     {
         HorizontalLayout horizontalLayout = new HorizontalLayout();
+        HorizontalLayout buttonsHorizontalLayout = new HorizontalLayout();
+
         horizontalLayout.setPadding(false);
+        buttonsHorizontalLayout.setPadding(false);
 
         horizontalLayout.add(visualizationStart, visualizationFinish);
+        buttonsHorizontalLayout.add(visualizeButton, helpButton);
 
         return new VerticalLayout(visualizationType,
                 patientId,
                 radioButtonGroup,
                 horizontalLayout,
-                visualizeButton,
+                buttonsHorizontalLayout,
                 progressBarLabel,
                 progressBar,
                 progressBarSubLabel);
@@ -137,13 +180,9 @@ public class VisualizationsView extends VerticalLayout
             return visualizationStart.getValue();
         }
 
-        LocalDateTime returnValue = LocalDateTime.now();
+        LocalDateTime returnValue = LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.DAYS);
         switch (radioButtonGroup.getValue())
         {
-            case "1 hour" ->
-            {
-                return returnValue.minusHours(1);
-            }
             case "1 day" ->
             {
                 return returnValue.minusDays(1);
@@ -151,6 +190,10 @@ public class VisualizationsView extends VerticalLayout
             case "3 days" ->
             {
                 return returnValue.minusDays(3);
+            }
+            case "5 days" ->
+            {
+                return returnValue.minusDays(5);
             }
             case "7 days" ->
             {
@@ -168,7 +211,7 @@ public class VisualizationsView extends VerticalLayout
             return visualizationFinish.getValue();
         }
 
-        return LocalDateTime.now();
+        return LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.DAYS);
     }
 
     private void visualizeData()
@@ -251,15 +294,33 @@ public class VisualizationsView extends VerticalLayout
             progressBarLabel.setVisible(true);
             progressBarSubLabel.setVisible(true);
 
-            ProcessReturn processReturn = createAndRunProcess("python3",
-                    "download_and_visualize_data.py",
-                    service.getLampAccessKey(),
-                    service.getLampSecretKey(),
-                    service.getLampServerAddress(),
-                    patientId.getValue().getStudyId(),
-                    visualizationType.getValue(),
-                    getVisualizationStart().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
-                    getVisualizationFinish().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
+            ProcessReturn processReturn;
+
+            if (radioButtonGroup.getValue().equals("Custom"))
+            {
+                processReturn = createAndRunProcess("python3",
+                        "download_and_visualize_data.py",
+                        service.getLampAccessKey(),
+                        service.getLampSecretKey(),
+                        service.getLampServerAddress(),
+                        patientId.getValue().getStudyId(),
+                        visualizationType.getValue(),
+                        getVisualizationStart().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")),
+                        getVisualizationFinish().format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm")));
+            }
+            else
+            {
+//                System.out.println("Calling process python3 with args: download_and_visualize_data_from_cache.py, " +
+//                        patientId.getValue().getStudyId() + ", " +
+//                        visualizationType.getValue() + ", " +
+//                        formatDayString(radioButtonGroup.getValue()));
+
+                processReturn = createAndRunProcess("python3",
+                        "download_and_visualize_data_from_cache.py",
+                        patientId.getValue().getStudyId(),
+                        visualizationType.getValue(),
+                        formatDayString(radioButtonGroup.getValue()));
+            }
 
             if (processReturn.getExitCode() == 0)
             {
@@ -294,6 +355,8 @@ public class VisualizationsView extends VerticalLayout
                 return;
             }
 
+            System.out.println("Trying to locate file " + image.toPath());
+
             if (!image.isFile())
             {
                 Notification errorNotification = Notification.show("Unable to locate visualization file.");
@@ -323,6 +386,34 @@ public class VisualizationsView extends VerticalLayout
         Image visualization = new Image(imageResource, "Visualization");
 
         add(visualization);
+    }
+
+    private String formatDayString(String inputString)
+    {
+        switch (inputString)
+        {
+            case "1 day" ->
+            {
+                return "1DAY";
+            }
+
+            case "3 days" ->
+            {
+                return "3DAYS";
+            }
+
+            case "5 days" ->
+            {
+                return "5DAYS";
+            }
+
+            case "7 days" ->
+            {
+                return "7DAYS";
+            }
+        }
+
+        return inputString;
     }
 
     private void visualizationSuccessful()

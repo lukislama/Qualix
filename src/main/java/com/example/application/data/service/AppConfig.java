@@ -5,11 +5,20 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 @ConfigurationProperties(prefix = "lampview")
 public class AppConfig
 {
+    public enum dataCacheStatus
+    {
+        NOT_BUILT,
+        BUILDING,
+        BUILT,
+        ERROR
+    }
+
     //LAMP server settings
     private String lampServerAddress, lampAccessKey, lampSecretKey, lampStudyId;
     //Email settings
     private String recipientEmailAddress, googleEmailAddress, googleAppPassword;
     private boolean serverSet, emailSet;
+    private dataCacheStatus status = dataCacheStatus.NOT_BUILT;
 
     public String getLampServerAddress()
     {
@@ -99,5 +108,15 @@ public class AppConfig
     public void setEmailSet(boolean emailSet)
     {
         this.emailSet = emailSet;
+    }
+
+    public dataCacheStatus getStatus()
+    {
+        return status;
+    }
+
+    public void setStatus(dataCacheStatus status)
+    {
+        this.status = status;
     }
 }

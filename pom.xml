@@ -6,7 +6,7 @@
     <groupId>com.example.application</groupId>
     <artifactId>LAMPView</artifactId>
     <name>LAMPView</name>
-    <version>0.8</version>
+    <version>0.9</version>
     <packaging>jar</packaging>
 
     <properties>

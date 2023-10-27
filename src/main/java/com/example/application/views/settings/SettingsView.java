@@ -1,17 +1,16 @@
 package com.example.application.views.settings;
 
+import com.example.application.data.service.AppConfig;
 import com.example.application.data.service.CrmService;
 import com.example.application.data.service.ProcessReturn;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.HtmlComponent;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.html.Anchor;
-import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.Paragraph;
-import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -19,13 +18,18 @@ import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.page.Push;
+import com.vaadin.flow.component.progressbar.ProgressBar;
+import com.vaadin.flow.component.progressbar.ProgressBarVariant;
 import com.vaadin.flow.component.textfield.EmailField;
 import com.vaadin.flow.component.textfield.PasswordField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 
+import com.vaadin.flow.theme.lumo.LumoUtility;
 import jakarta.annotation.security.RolesAllowed;
+import org.springframework.scheduling.annotation.Async;
 
 import static com.example.application.data.service.Utilities.createAndRunProcess;
 
@@ -53,6 +57,12 @@ public class SettingsView extends VerticalLayout
     final Dialog helpDialog = new Dialog();
     final CrmService service;
 
+    //Data cache settings
+    final Span cacheSettingsSpan = new Span("Data cache settings");
+    final ProgressBar progressBar = new ProgressBar();
+    final NativeLabel progressBarLabel = new NativeLabel("Cache is being generated.");
+    final Button createDataCacheButton = new Button("Create cache");
+
     public SettingsView(CrmService service)
     {
         this.service = service;
@@ -64,7 +74,7 @@ public class SettingsView extends VerticalLayout
         HorizontalLayout horizontalLayout = new HorizontalLayout();
         horizontalLayout.setPadding(false);
 
-        horizontalLayout.add(getForm(), getEmailSettingsForm());
+        horizontalLayout.add(getForm(), getEmailSettingsForm(), getDataCacheSettingsForm());
 
         add(horizontalLayout);
     }
@@ -97,6 +107,14 @@ public class SettingsView extends VerticalLayout
                 googleAppPasswordField,
                 horizontalLayout,
                 helpDialog);
+    }
+
+    private Component getDataCacheSettingsForm()
+    {
+        return new VerticalLayout(cacheSettingsSpan,
+                progressBar,
+                progressBarLabel,
+                createDataCacheButton);
     }
 
     private void configureContent()
@@ -133,6 +151,97 @@ public class SettingsView extends VerticalLayout
 
         VerticalLayout dialogLayout = createDialogLayout(helpDialog);
         helpDialog.add(dialogLayout);
+
+        //Cache settings
+        progressBarLabel.setId("pblbl");
+        progressBarLabel.addClassName(LumoUtility.TextColor.SECONDARY);
+        progressBarLabel.setVisible(false);
+
+        progressBar.getElement().setAttribute("aria-labelledby", "pblbl");
+
+        configureCacheStatus();
+
+        createDataCacheButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
+        createDataCacheButton.addClickListener(e -> generateDataCache());
+    }
+
+    public void configureCacheStatus()
+    {
+        switch (service.getDataCacheStatus())
+        {
+            case BUILT ->
+            {
+                progressBarLabel.setVisible(false);
+
+                progressBar.setIndeterminate(false);
+                progressBar.addThemeVariants(ProgressBarVariant.LUMO_SUCCESS);
+                progressBar.setValue(1);
+
+                createDataCacheButton.setEnabled(false);
+            }
+
+            case BUILDING ->
+            {
+                progressBarLabel.setVisible(true);
+
+                progressBar.setIndeterminate(true);
+
+                createDataCacheButton.setEnabled(false);
+            }
+
+            case NOT_BUILT ->
+            {
+                progressBarLabel.setVisible(false);
+
+                progressBar.setIndeterminate(false);
+                progressBar.setValue(0);
+
+                createDataCacheButton.setEnabled(true);
+            }
+
+            case ERROR ->
+            {
+                progressBarLabel.setVisible(false);
+
+                progressBar.setIndeterminate(false);
+                progressBar.addThemeVariants(ProgressBarVariant.LUMO_ERROR);
+                progressBar.setValue(1);
+
+                createDataCacheButton.setEnabled(true);
+            }
+        }
+    }
+
+    public void generateDataCacheThread(UI ui)
+    {
+        ProcessReturn processReturn = createAndRunProcess("python3",
+                "create_data_cache.py",
+                service.getLampAccessKey(),
+                service.getLampSecretKey(),
+                service.getLampServerAddress(),
+                service.getLampStudyId());
+
+        if (processReturn.getExitCode() == 0)
+        {
+            service.setDataCacheStatus(AppConfig.dataCacheStatus.BUILT);
+        }
+        else
+        {
+            service.setDataCacheStatus(AppConfig.dataCacheStatus.ERROR);
+        }
+
+        service.setDataCacheStatus(AppConfig.dataCacheStatus.BUILT);
+        System.out.println("Thread finished!");
+        ui.access(this::configureCacheStatus);
+        ui.push();
+    }
+
+    public void generateDataCache()
+    {
+        service.setDataCacheStatus(AppConfig.dataCacheStatus.BUILDING);
+        configureCacheStatus();
+
+        new Thread(() -> generateDataCacheThread(getUI().get())).start();
     }
 
     private VerticalLayout createDialogLayout(Dialog helpDialog)
@@ -140,8 +249,6 @@ public class SettingsView extends VerticalLayout
         H2 headline = new H2("Google App Password information");
         headline.getStyle().set("margin", "var(--lumo-space-m) 0")
                 .set("font-size", "1.5em").set("font-weight", "bold");
-
-        HtmlComponent br = new HtmlComponent("br");
 
         Paragraph paragraph = new Paragraph();
         paragraph.add("In order to send email notifications, you need to use a Google account.");
