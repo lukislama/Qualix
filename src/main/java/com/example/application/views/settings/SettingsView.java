@@ -220,7 +220,7 @@ public class SettingsView extends VerticalLayout
                 service.getLampSecretKey(),
                 service.getLampServerAddress(),
                 service.getLampStudyId());
-
+        
         if (processReturn.getExitCode() == 0)
         {
             service.setDataCacheStatus(AppConfig.dataCacheStatus.BUILT);

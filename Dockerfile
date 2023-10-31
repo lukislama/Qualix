@@ -14,6 +14,7 @@ COPY src/main/resources/python/test_connection.py .
 COPY src/main/resources/python/get_study_participants.py .
 COPY src/main/resources/python/get_participant_last_data_time.py .
 COPY src/main/resources/python/download_and_visualize_data.py .
+COPY src/main/resources/python/create_data_cache.py .
 COPY src/main/resources/python/download_and_visualize_data_from_cache.py .
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app.jar"]
