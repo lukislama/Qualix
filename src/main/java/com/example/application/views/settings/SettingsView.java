@@ -169,7 +169,7 @@ public class SettingsView extends VerticalLayout
     {
         switch (service.getDataCacheStatus())
         {
-            case BUILT ->
+            case "BUILT" ->
             {
                 progressBarLabel.setVisible(false);
 
@@ -180,7 +180,7 @@ public class SettingsView extends VerticalLayout
                 createDataCacheButton.setEnabled(false);
             }
 
-            case BUILDING ->
+            case "BUILDING" ->
             {
                 progressBarLabel.setVisible(true);
 
@@ -189,7 +189,7 @@ public class SettingsView extends VerticalLayout
                 createDataCacheButton.setEnabled(false);
             }
 
-            case NOT_BUILT ->
+            case "NOT_BUILT" ->
             {
                 progressBarLabel.setVisible(false);
 
@@ -199,7 +199,7 @@ public class SettingsView extends VerticalLayout
                 createDataCacheButton.setEnabled(true);
             }
 
-            case ERROR ->
+            case "ERROR" ->
             {
                 progressBarLabel.setVisible(false);
 
@@ -220,17 +220,17 @@ public class SettingsView extends VerticalLayout
                 service.getLampSecretKey(),
                 service.getLampServerAddress(),
                 service.getLampStudyId());
-        
+
         if (processReturn.getExitCode() == 0)
         {
-            service.setDataCacheStatus(AppConfig.dataCacheStatus.BUILT);
+            service.setDataCacheStatus("BUILT");
         }
         else
         {
-            service.setDataCacheStatus(AppConfig.dataCacheStatus.ERROR);
+            service.setDataCacheStatus("ERROR");
         }
 
-        service.setDataCacheStatus(AppConfig.dataCacheStatus.BUILT);
+        service.setDataCacheStatus("BUILT");
         System.out.println("Thread finished!");
         ui.access(this::configureCacheStatus);
         ui.push();
@@ -238,7 +238,7 @@ public class SettingsView extends VerticalLayout
 
     public void generateDataCache()
     {
-        service.setDataCacheStatus(AppConfig.dataCacheStatus.BUILDING);
+        service.setDataCacheStatus("BUILDING");
         configureCacheStatus();
 
         new Thread(() -> generateDataCacheThread(getUI().get())).start();

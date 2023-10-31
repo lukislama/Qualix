@@ -110,13 +110,13 @@ public class AppConfig
         this.emailSet = emailSet;
     }
 
-    public dataCacheStatus getStatus()
+    public String getStatus()
     {
-        return status;
+        return status.name();
     }
 
-    public void setStatus(dataCacheStatus status)
+    public void setStatus(String status)
     {
-        this.status = status;
+        this.status = dataCacheStatus.valueOf(status);
     }
 }

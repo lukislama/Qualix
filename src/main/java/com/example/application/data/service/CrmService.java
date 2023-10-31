@@ -261,7 +261,7 @@ public class CrmService
         }
     }
 
-    @Scheduled(cron = "0 0 3 * * *")
+    @Scheduled(cron = "0 0 9 * * *")
     private void getDataQualityForPreviousDay()
     {
         if (appConfig.isServerSet())
@@ -407,7 +407,7 @@ public class CrmService
                     .filter(e -> e.getDate().equals(LocalDate.now().toString()))
                     .toList();
 
-            if(dataPoints.size() > 0)
+            if(!dataPoints.isEmpty())
             {
                 data.setGPS(dataPoints.get(0).getGPS());
                 data.setAccelerometer(dataPoints.get(0).getAccelerometer());
@@ -466,7 +466,7 @@ public class CrmService
     @Scheduled(cron = "0 0 3 * * *")
     private void consolidateDataCache()
     {
-        if (appConfig.getStatus() == AppConfig.dataCacheStatus.BUILT)
+        if (Objects.equals(appConfig.getStatus(), "BUILT"))
         {
             ProcessReturn processReturn = createAndRunProcess("python3",
                     "consolidate_data_cache.py",
@@ -656,13 +656,13 @@ public class CrmService
         return appConfig.isServerSet();
     }
 
-    public AppConfig.dataCacheStatus getDataCacheStatus()
+    public String getDataCacheStatus()
     {
         return appConfig.getStatus();
     }
 
-    public void setDataCacheStatus(AppConfig.dataCacheStatus dataCacheStatus)
+    public void setDataCacheStatus(String status)
     {
-        appConfig.setStatus(dataCacheStatus);
+        appConfig.setStatus(status);
     }
 }
