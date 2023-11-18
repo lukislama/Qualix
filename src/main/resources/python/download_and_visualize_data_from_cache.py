@@ -25,7 +25,6 @@ if __name__ == '__main__':
         case "1DAY":
             TIMESTAMP_DAY = datetime.strptime(TIMESTAMP_NOW.strftime("%Y-%m-%d 00:00:00.000000"),
                                               "%Y-%m-%d 00:00:00.000000")
-            TIMESTAMP_DAY = TIMESTAMP_DAY - timedelta(days=1)
             TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=1)
 
             offset = 1
@@ -33,24 +32,21 @@ if __name__ == '__main__':
         case "3DAYS":
             TIMESTAMP_DAY = datetime.strptime(TIMESTAMP_NOW.strftime("%Y-%m-%d 00:00:00.000000"),
                                               "%Y-%m-%d 00:00:00.000000")
-            TIMESTAMP_DAY = TIMESTAMP_DAY - timedelta(days=3)
-            TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=1)
+            TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=3)
 
             offset = 3
 
         case "5DAYS":
             TIMESTAMP_DAY = datetime.strptime(TIMESTAMP_NOW.strftime("%Y-%m-%d 00:00:00.000000"),
                                               "%Y-%m-%d 00:00:00.000000")
-            TIMESTAMP_DAY = TIMESTAMP_DAY - timedelta(days=5)
-            TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=1)
+            TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=5)
 
             offset = 5
 
         case "7DAYS":
             TIMESTAMP_DAY = datetime.strptime(TIMESTAMP_NOW.strftime("%Y-%m-%d 00:00:00.000000"),
                                               "%Y-%m-%d 00:00:00.000000")
-            TIMESTAMP_DAY = TIMESTAMP_DAY - timedelta(days=7)
-            TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=1)
+            TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=7)
 
             offset = 7
 

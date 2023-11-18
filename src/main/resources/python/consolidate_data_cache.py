@@ -12,7 +12,6 @@ participants = LAMP.Participant.all_by_study(sys.argv[4])
 TIMESTAMP_NOW = datetime.now()
 
 TIMESTAMP_DAY = datetime.strptime(TIMESTAMP_NOW.strftime("%Y-%m-%d 00:00:00.000000"), "%Y-%m-%d 00:00:00.000000")
-TIMESTAMP_DAY = TIMESTAMP_DAY - timedelta(days=1)
 TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=1)
 
 # Accelerometer

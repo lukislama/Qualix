@@ -12,7 +12,6 @@ TIMESTAMP_NOW = datetime.now()
 # Accelerometer
 
 TIMESTAMP_DAY = datetime.strptime(TIMESTAMP_NOW.strftime("%Y-%m-%d 00:00:00.000000"), "%Y-%m-%d 00:00:00.000000")
-TIMESTAMP_DAY = TIMESTAMP_DAY - timedelta(days=1)
 TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=1)
 
 print("Accelerometer")
@@ -67,7 +66,6 @@ for i in range(7):
 # GPS
 
 TIMESTAMP_DAY = datetime.strptime(TIMESTAMP_NOW.strftime("%Y-%m-%d 00:00:00.000000"), "%Y-%m-%d 00:00:00.000000")
-TIMESTAMP_DAY = TIMESTAMP_DAY - timedelta(days=1)
 TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=1)
 
 print("GPS")
@@ -123,7 +121,6 @@ for i in range(7):
 # Device state
 
 TIMESTAMP_DAY = datetime.strptime(TIMESTAMP_NOW.strftime("%Y-%m-%d 00:00:00.000000"), "%Y-%m-%d 00:00:00.000000")
-TIMESTAMP_DAY = TIMESTAMP_DAY - timedelta(days=1)
 TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=1)
 
 print("Device state")
@@ -176,7 +173,6 @@ for i in range(7):
 # Telephony
 
 TIMESTAMP_DAY = datetime.strptime(TIMESTAMP_NOW.strftime("%Y-%m-%d 00:00:00.000000"), "%Y-%m-%d 00:00:00.000000")
-TIMESTAMP_DAY = TIMESTAMP_DAY - timedelta(days=1)
 TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=1)
 
 print("Telephony")
