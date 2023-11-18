@@ -10,12 +10,7 @@ RUN pip install --no-cache-dir --upgrade pip && \
 RUN mkdir generated_visualizations
 RUN mkdir data_cache
 COPY target/*.jar app.jar
-COPY src/main/resources/python/test_connection.py .
-COPY src/main/resources/python/get_study_participants.py .
-COPY src/main/resources/python/get_participant_last_data_time.py .
-COPY src/main/resources/python/download_and_visualize_data.py .
-COPY src/main/resources/python/create_data_cache.py .
-COPY src/main/resources/python/consolidate_data_cache.py .
-COPY src/main/resources/python/download_and_visualize_data_from_cache.py .
+COPY src/main/resources/python/*.py .
+COPY src/main/resources/python/data_cache/*.csv data_cache/
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app.jar"]

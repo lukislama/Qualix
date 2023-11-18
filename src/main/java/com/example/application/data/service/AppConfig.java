@@ -2,6 +2,9 @@ package com.example.application.data.service;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @ConfigurationProperties(prefix = "lampview")
 public class AppConfig
 {
@@ -19,6 +22,7 @@ public class AppConfig
     private String recipientEmailAddress, googleEmailAddress, googleAppPassword;
     private boolean serverSet, emailSet;
     private dataCacheStatus status = dataCacheStatus.NOT_BUILT;
+    private List<String> visualizationTypes = List.of("Accelerometer", "Data_quality");
 
     public String getLampServerAddress()
     {
@@ -118,5 +122,10 @@ public class AppConfig
     public void setStatus(String status)
     {
         this.status = dataCacheStatus.valueOf(status);
+    }
+
+    public List<String> getVisualizationTypes()
+    {
+        return visualizationTypes;
     }
 }

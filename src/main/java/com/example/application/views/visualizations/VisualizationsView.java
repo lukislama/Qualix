@@ -71,7 +71,7 @@ public class VisualizationsView extends VerticalLayout
 
     private void configureContent()
     {
-        visualizationType.setItems("Accelerometer", "Data_quality");
+        visualizationType.setItems(service.getVisualizationTypes());
         visualizationType.setRequired(true);
 
         patientId.setItems(service.findAllContacts(""));

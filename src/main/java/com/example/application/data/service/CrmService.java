@@ -261,7 +261,7 @@ public class CrmService
         }
     }
 
-    @Scheduled(cron = "0 0 9 * * *")
+    @Scheduled(fixedDelay = 3600000)
     private void getDataQualityForPreviousDay()
     {
         if (appConfig.isServerSet())
@@ -391,6 +391,11 @@ public class CrmService
                 System.out.println("Notification email send.");
             }
         }
+
+        if (appConfig.getStatus().equals("BUILT"))
+        {
+            consolidateImageCache();
+        }
     }
 
     private void recolorData()
@@ -479,6 +484,56 @@ public class CrmService
             {
                 System.out.println("An error occurred while generating data cache: Exit code " + processReturn.getExitCode());
                 System.out.println(processReturn.getResults());
+            }
+        }
+    }
+
+    private void consolidateImageCache()
+    {
+        ProcessReturn processReturn;
+
+        processReturn = createAndRunProcess("python3",
+                "delete_old_visualizations.py");
+
+        if (processReturn.getExitCode() != 0)
+        {
+            System.out.println("An error occurred while deleting old visualizations. Exit code: " + processReturn.getExitCode());
+        }
+
+        System.out.println(processReturn.getResults());
+
+        List<Contact> contacts = findAllContacts("");
+        List<String> visualizationLengths = List.of("1DAY",
+                "3DAYS",
+                "5DAYS",
+                "7DAYS");
+        for (Contact contact : contacts)
+        {
+            for (String visualizationType : appConfig.getVisualizationTypes())
+            {
+                for (String visualizationLength : visualizationLengths)
+                {
+                    processReturn = createAndRunProcess("python3",
+                            "download_and_visualize_data_from_cache.py",
+                            contact.getStudyId(),
+                            visualizationType,
+                            visualizationLength);
+
+                    if (processReturn.getExitCode() == 0)
+                    {
+                        System.out.println("Generated " + visualizationType + " visualization" +
+                                " for patient " + contact.getStudyId() + " of length " + visualizationLength);
+                    }
+                    else if (processReturn.getExitCode() == 101)
+                    {
+                        System.out.println("No " + visualizationType + " data for patient " + contact.getStudyId());
+                    }
+                    else
+                    {
+                        System.out.println("An error occurred while visualizing " + visualizationType +
+                                " data for patient " + contact.getStudyId() + ". Exit code: " + processReturn.getExitCode());
+                    }
+                }
             }
         }
     }
@@ -664,5 +719,10 @@ public class CrmService
     public void setDataCacheStatus(String status)
     {
         appConfig.setStatus(status);
+    }
+
+    public List<String> getVisualizationTypes()
+    {
+        return appConfig.getVisualizationTypes();
     }
 }
