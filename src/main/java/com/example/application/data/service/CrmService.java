@@ -485,6 +485,10 @@ public class CrmService
                 System.out.println("An error occurred while generating data cache: Exit code " + processReturn.getExitCode());
                 System.out.println(processReturn.getResults());
             }
+            else
+            {
+                System.out.println("Data cache consolidated. Output:  " + processReturn.getResults());
+            }
         }
     }
 

@@ -32,21 +32,24 @@ if __name__ == '__main__':
         case "3DAYS":
             TIMESTAMP_DAY = datetime.strptime(TIMESTAMP_NOW.strftime("%Y-%m-%d 00:00:00.000000"),
                                               "%Y-%m-%d 00:00:00.000000")
-            TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=3)
+            TIMESTAMP_DAY = TIMESTAMP_DAY - timedelta(days=2)
+            TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=1)
 
             offset = 3
 
         case "5DAYS":
             TIMESTAMP_DAY = datetime.strptime(TIMESTAMP_NOW.strftime("%Y-%m-%d 00:00:00.000000"),
                                               "%Y-%m-%d 00:00:00.000000")
-            TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=5)
+            TIMESTAMP_DAY = TIMESTAMP_DAY - timedelta(days=4)
+            TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=1)
 
             offset = 5
 
         case "7DAYS":
             TIMESTAMP_DAY = datetime.strptime(TIMESTAMP_NOW.strftime("%Y-%m-%d 00:00:00.000000"),
                                               "%Y-%m-%d 00:00:00.000000")
-            TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=7)
+            TIMESTAMP_DAY = TIMESTAMP_DAY - timedelta(days=6)
+            TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=1)
 
             offset = 7
 
@@ -82,8 +85,6 @@ if __name__ == '__main__':
 
     if len(data) == 0:
         exit(101)
-
-    visualization_finish -= timedelta(days=1)
 
     TIMESTAMP_DAY = visualization_finish
     TIMESTAMP_LIMIT = visualization_start
@@ -124,6 +125,7 @@ if __name__ == '__main__':
                         + visualization_type + '_'
                         + TIMESTAMP_LIMIT.strftime('%Y-%m-%dT%H:%M') + '_'
                         + TIMESTAMP_DAY.strftime('%Y-%m-%dT%H:%M') + '.png')
+            plt.show()
 
         case "Data_quality":
 
@@ -169,3 +171,4 @@ if __name__ == '__main__':
                         + visualization_type + '_'
                         + TIMESTAMP_LIMIT.strftime('%Y-%m-%dT%H:%M') + '_'
                         + TIMESTAMP_DAY.strftime('%Y-%m-%dT%H:%M') + '.png')
+            plt.show()
