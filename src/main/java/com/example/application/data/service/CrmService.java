@@ -273,9 +273,23 @@ public class CrmService
             long hoursDifference;
 
             List<Contact> contacts = findAllContacts("");
+            Data data;
+            List<DataPoint> dataPoints;
             for (Contact contact : contacts)
             {
+                data = contact.getData();
+
+                dataPoints = data.getDataPoints()
+                        .stream()
+                        .filter(e -> e.getDate().equals(LocalDate.now().toString()))
+                        .toList();
+
                 System.out.println("Patient: " + contact.getStudyId());
+
+                if (!dataPoints.isEmpty())
+                {
+                    continue;
+                }
 
                 processReturn = createAndRunProcess("python3",
                         "get_participant_last_data_time.py",
