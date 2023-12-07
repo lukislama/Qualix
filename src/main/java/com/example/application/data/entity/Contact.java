@@ -3,11 +3,13 @@ package com.example.application.data.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToOne;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
+@Table(name = "contact")
 public class Contact extends AbstractEntity
 {
     @NotEmpty

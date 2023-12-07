@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "data")
 public class Data extends AbstractEntity
 {
     @NotEmpty
