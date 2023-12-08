@@ -11,6 +11,5 @@ RUN mkdir generated_visualizations
 RUN mkdir data_cache
 COPY target/*.jar app.jar
 COPY src/main/resources/python/*.py .
-COPY src/main/resources/python/data_cache/*.csv data_cache/
 EXPOSE 8080
 ENTRYPOINT ["java", "-jar", "/app.jar"]
