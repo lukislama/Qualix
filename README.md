@@ -14,6 +14,23 @@ this application the study staff can:
 - Generate graphs using collected data
 
 # Building and deployment
+
+Before building and deploying LAMPView, you may want to change some basic settings, such as the login information or
+which port to expose.
+
+LAMPView offers two users by default, a basic user *user* and an administrative user *admin*.
+The difference is that the administrative user can access the Settings view and the List view containing information
+about participants in a given LAMP study. To change the login information from this basic settings you can modify the
+[SecurityConfig.java](src/main/java/com/example/application/security/SecurityConfig.java) file.
+
+To change the exposed port, you can modify the [Docker compose](docker-compose.yml) file. If you want LAMPView to be
+accessible via the port 5500 for example, you would modify the "ports" section of the Docker compose file like so:
+
+```yaml
+ports:
+  - "5500:8080"
+```
+
 ## Requirements
 
 Apart from Docker, this project requires the following packages:
@@ -46,3 +63,61 @@ To run the script, open a terminal window and navigate to the root folder of thi
 ```bash
 sudo ./build_and_run.sh
 ```
+
+# Initial setup
+## Connecting to a LAMP server
+
+In order for LAMPView to communicate with a LAMP platform server, you need to enter the credentials for your LAMP server.
+You can do this before building and deploying LAMPView by filling in the prepared fields in the
+[application.properties](src/main/resources/application.properties) file or after building and deploying in the Settings
+tab of the application. If you choose to modify the application properties file, be sure to also set
+*lampview.server-set=true* like so:
+
+```properties
+lampview.lamp-server-address=YOUR LAMP SERVER ADDRESS
+lampview.lamp-access-key=YOUR LAMP ACCESS KEY
+lampview.lamp-secret-key=YOUR LAMP SECRET KEY
+lampview.lamp-study-id=YOUR LAMP STUDY ID
+
+lampview.server-set=true
+```
+
+## Setting up email notifications
+
+LAMPView can send you daily email notifications regarding the quality of gathered data from the previous day. In order to
+use this feature you need to use a Google account with 2FA enabled and generate a new *App password*. Instructions on how
+to create a Google app password can be found [here](https://support.google.com/accounts/answer/185833?hl=en&sjid=3303992743476717718-EU)
+Do NOT use your Google account password. LAMPView will not access any information on your Google account, it will only
+use it to send notification emails. Still, it is recommended to create a new Google account if you wish to use this feature.
+
+Same as with the LAMP server credentials, you can enter your Google account information in the
+[application.properties](src/main/resources/application.properties) file or in the Settings tab. If you choose to modify
+the application properties file, be sure to also set *lampview.email-set=true* like so:
+
+```properties
+lampview.google-email-address=YOUR GOOGLE EMAIL ADDRESS
+lampview.google-app-password=YOUR GENERATED GOOGLE APP PASSWORD - DO NOT USE YOUR GOOGLE ACCOUNT PASSWORD
+lampview.recipient-email-address=EMAIL ADDRESS THAT WILL RECEIVE NOTIFICATIONS
+
+lampview.email-set=true
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
