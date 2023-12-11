@@ -192,7 +192,14 @@ Let's visualize data quality from the last day for some participant. Select the 
 ![Visualizations - data quality visualization](screenshots/Visualizations%20view%20-%20data%20quality%20visualization.png)
 You can now scroll the page down to see the full graph:
 ![Visualizations - full data quality visualization](screenshots/Visualizations%20-%20full%20data%20quality%20visualization.png)
-
+Since the generated graph is inserted as a simple image, you can download it by right-clicking and saving the image.
+Let's check another type of visualization. Select *Accelerometer* from the *Visualization type* menu and click on
+*Visualize* again. A new graph will be generated below the original one.
+![Visualizations - full accelerometer visualization](screenshots/Visualizations%20view%20-%20full%20accelerometer%20visualization.png)
+Now let's check the *Custom* visualization length setting. After clicking it a new date time pickers will appear.
+Here you will be able to select a custom start and end of the visualization:
+![Visualizations - custom date](screenshots/Visualizations%20view%20-%20custom%20vis%20setting%20-%20date.png)
+![Visualizations - custom time](screenshots/Visualizations%20view%20-%20custom%20vis%20setting%20-%20time.png)
 
 
 
