@@ -2,7 +2,7 @@
 
 This application is a web-based project that uses Java, [Vaadin](https://vaadin.com/), and Spring Boot as the main technologies.
 It also uses Python, matplotlib, and pandas for data analysis and visualization.
-It is designed to run on Docker containers, which can be deployed locally or on any major cloud provider. It's purpose is to provide missing functionality to
+It is designed to run on Docker containers, which can be deployed locally or on any major cloud provider. Its purpose is to provide missing functionality to
 the [LAMP platform](https://docs.lamp.digital/).
 
 The main purpose of this project is to make the life of a person using the LAMP platform to conduct a study easier. Using
@@ -105,15 +105,15 @@ lampview.email-set=true
 
 # Using LAMPView
 
-Here you will find a step by step tutorial on how to use LAMPView and how to set it up using the GUI part of the application.
+Here you will find a step-by-step tutorial on how to use LAMPView and how to set it up using the GUI part of the application.
 
 After deploying LAMPView and connecting to it, you will see a login screen. ![Login screen](screenshots/Login%20screen.png)
-Login with an account that has administrative privileges, and you will be greeted with a empty Dashboard view.
+Login with an account that has administrative privileges, and you will be greeted with an empty Dashboard view.
 ![Empty Dashboard view](screenshots/Empty%20Dashboard%20view.png)
 Dashboard view is the main view of the application, which will show you information about the quality of collected data
 at a glance. 
 
-To navigate LAMPView, you can use the menu on the left side of the screen. To log out of LAMPView, use the *Log out* button
+To navigate LAMPView, you can use the menu on the left side of the screen. To log out of LAMPView, use the *Log-out* button
 on the upper right hand side of the screen. 
 
 Now navigate to the List view by clicking on *List* in the view menu.
@@ -121,7 +121,6 @@ Now navigate to the List view by clicking on *List* in the view menu.
 List view is only accessible to an account with administrative access. On this view, personal information about your participants
 can be stored. Now click on *Settings*, and we will set up connection to your LAMP server and Google account for sending
 notification emails.
-
 ![Empty Settings view](screenshots/Empty%20Settings%20view.png)
 Settings view can be used to set up connection to your LAMP server, Google account, and for creating a data cache.
 The data cache works by downloading data from all participants in a given study from your LAMP server over the last week.
@@ -139,15 +138,15 @@ After filling in your information, click on *Save* under *Google email settings*
 email to the recipient address. If it succeeds, you will receive a notification email that looks like so:
 
 ```text
-You email has been set to receive notifications from the LAMPView application.
+Your email has been set to receive notifications from the LAMPView application.
 If you think this is a mistake, please contact the study administrators at YOUR GOOGLE EMAIL ADDRESS.
 ```
 
 And LAMPView will display the following message:
 ![Settings view - email set](screenshots/Settings%20view%20-%20Email%20set.png)
 If you have set up your LAMP server settings and successfully connected to it, you can now create the data cache. This
-process can take up to multiple hours, if you have high number of study participants (a few dozen). After clicking *Create
-cache*, the process will begin and you will see a moving progress bar:
+process can take up to multiple hours, if you have a high number of study participants (a few dozen). After clicking *Create
+cache*, the process will begin, and you will see a moving progress bar:
 ![Settings view - building data cache](screenshots/Settings%20view%20-%20building%20data%20cache.png)
 The data cache creation process runs on a background thread, so you can get out of the Settings view or even log out of
 LAMPView and the data cache will still be created in the background. After the data cache is created, you will see a
