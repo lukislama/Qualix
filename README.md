@@ -1,6 +1,6 @@
 # Overview
 
-This application is a web-based project that uses Java, [Vaadin](https://vaadin.com/), and Spring Boot as the main technologies.
+LAMPView is a web-based project that uses Java, [Vaadin](https://vaadin.com/), and Spring Boot as the main technologies.
 It also uses Python, matplotlib, and pandas for data analysis and visualization.
 It is designed to run on Docker containers, which can be deployed locally or on any major cloud provider. Its purpose is to provide missing functionality to
 the [LAMP platform](https://docs.lamp.digital/).
