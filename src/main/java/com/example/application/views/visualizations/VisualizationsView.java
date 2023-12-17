@@ -120,7 +120,7 @@ public class VisualizationsView extends VerticalLayout
         paragraph.add("Using the 'Custom' option will not use the data cache and can take a very long time to finish. " +
                 "It is recommended to use the other options instead.");
         paragraph.add(new HtmlComponent("br"));
-        paragraph.add("While using the data cache, 1 day of data takes about 10 seconds to process.");
+        paragraph.add("While using the data cache, the visualization will be instant.");
         paragraph.add(new HtmlComponent("br"));
         paragraph.add("While using the custom option, 1 day of data takes about 360 seconds to process.");
 
@@ -180,7 +180,7 @@ public class VisualizationsView extends VerticalLayout
             return visualizationStart.getValue();
         }
 
-        LocalDateTime returnValue = LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.DAYS);
+        LocalDateTime returnValue = LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
         switch (radioButtonGroup.getValue())
         {
             case "1 day" ->
@@ -211,7 +211,7 @@ public class VisualizationsView extends VerticalLayout
             return visualizationFinish.getValue();
         }
 
-        return LocalDateTime.now().minusDays(1).truncatedTo(ChronoUnit.DAYS);
+        return LocalDateTime.now().truncatedTo(ChronoUnit.DAYS);
     }
 
     private void visualizeData()
