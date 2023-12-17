@@ -207,6 +207,7 @@ public class CrmService
         appConfig.setServerSet(true);
 
         getStudyParticipants();
+        getDataQualityForPreviousDay();
     }
 
     private void getStudyParticipants()
@@ -506,7 +507,7 @@ public class CrmService
         }
     }
 
-    private void consolidateImageCache()
+    public void consolidateImageCache()
     {
         ProcessReturn processReturn;
 

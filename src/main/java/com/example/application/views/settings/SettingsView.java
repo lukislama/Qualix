@@ -224,13 +224,13 @@ public class SettingsView extends VerticalLayout
         if (processReturn.getExitCode() == 0)
         {
             service.setDataCacheStatus("BUILT");
+            service.consolidateImageCache();
         }
         else
         {
             service.setDataCacheStatus("ERROR");
         }
 
-        service.setDataCacheStatus("BUILT");
         System.out.println("Thread finished!");
         ui.access(this::configureCacheStatus);
         ui.push();
