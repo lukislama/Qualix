@@ -406,11 +406,6 @@ public class MainService
                 System.out.println("Notification email send.");
             }
         }
-
-        if (appConfig.getStatus().equals("BUILT"))
-        {
-            consolidateImageCache();
-        }
     }
 
     private void recolorData()
@@ -503,6 +498,8 @@ public class MainService
             else
             {
                 System.out.println("Data cache consolidated. Output:  " + processReturn.getResults());
+
+                consolidateImageCache();
             }
         }
     }
