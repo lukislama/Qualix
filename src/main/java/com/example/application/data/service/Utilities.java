@@ -17,6 +17,11 @@ import java.util.Objects;
 
 public class Utilities
 {
+    private Utilities()
+    {
+        throw new AssertionError("Utility class should not be instantiated.");
+    }
+
     public static ProcessReturn createAndRunProcess(String ... args)
     {
         ProcessReturn processReturn = new ProcessReturn(null, -1);
