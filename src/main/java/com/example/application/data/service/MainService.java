@@ -57,7 +57,7 @@ public class CrmService
                     appConfig.getGoogleAppPassword(),
                     appConfig.getRecipientEmailAddress(),
                     "Receiving email set.",
-                    "You email has been set to receive notifications from the LAMPView application.\n" +
+                    "You email has been set to receive notifications from the Qualix application.\n" +
                             "If you think this is a mistake, please contact the study administrators at " + appConfig.getGoogleEmailAddress());
         }
 
@@ -198,7 +198,7 @@ public class CrmService
                 appConfig.getGoogleAppPassword(),
                 appConfig.getRecipientEmailAddress(),
                 "Receiving email set.",
-                "You email has been set to receive notifications from the LAMPView application.\n" +
+                "You email has been set to receive notifications from the Qualix application.\n" +
                         "If you think this is a mistake, please contact the study administrators at " + appConfig.getGoogleEmailAddress());
     }
 
@@ -400,7 +400,7 @@ public class CrmService
                 sendEmail(appConfig.getGoogleEmailAddress(),
                         appConfig.getGoogleAppPassword(),
                         appConfig.getRecipientEmailAddress(),
-                        "LAMPView report " + currentDate.toLocalDate(),
+                        "Qualix report " + currentDate.toLocalDate(),
                         generateTableForEmail());
 
                 System.out.println("Notification email send.");
