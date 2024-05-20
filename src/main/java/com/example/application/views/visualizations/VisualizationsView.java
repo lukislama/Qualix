@@ -1,7 +1,7 @@
 package com.example.application.views.visualizations;
 
 import com.example.application.data.entity.Contact;
-import com.example.application.data.service.CrmService;
+import com.example.application.data.service.MainService;
 import com.example.application.data.service.ProcessReturn;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.AbstractField;
@@ -56,9 +56,9 @@ public class VisualizationsView extends VerticalLayout
     final NativeLabel progressBarLabel = new NativeLabel("Downloading data and generating image...");
     final Span progressBarSubLabel = new Span("Process can take a very long time depending on the amount of data that needs to be processed.");
 
-    final CrmService service;
+    final MainService service;
 
-    public VisualizationsView(CrmService service)
+    public VisualizationsView(MainService service)
     {
         this.service = service;
         addClassName("visualizations-view");

@@ -23,7 +23,7 @@ import static com.example.application.data.service.Utilities.createAndRunProcess
 import static com.example.application.data.service.Utilities.sendEmail;
 
 @Service
-public class CrmService
+public class MainService
 {
     private final ContactRepository contactRepository;
     private final StatusRepository statusRepository;
@@ -32,11 +32,11 @@ public class CrmService
 
     private final AppConfig appConfig;
 
-    public CrmService(ContactRepository contactRepository,
-                      StatusRepository statusRepository,
-                      DataRepository dataRepository,
-                      DataPointRepository dataPointRepository,
-                      AppConfig appConfig)
+    public MainService(ContactRepository contactRepository,
+                       StatusRepository statusRepository,
+                       DataRepository dataRepository,
+                       DataPointRepository dataPointRepository,
+                       AppConfig appConfig)
     {
         this.contactRepository = contactRepository;
         this.statusRepository = statusRepository;

@@ -1,7 +1,6 @@
 package com.example.application.views.settings;
 
-import com.example.application.data.service.AppConfig;
-import com.example.application.data.service.CrmService;
+import com.example.application.data.service.MainService;
 import com.example.application.data.service.ProcessReturn;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
@@ -55,7 +54,7 @@ public class SettingsView extends VerticalLayout
     final Button saveGoogleCredentialsButton = new Button("Save");
     final Button helpButton = new Button(new Icon(VaadinIcon.QUESTION));
     final Dialog helpDialog = new Dialog();
-    final CrmService service;
+    final MainService service;
 
     //Data cache settings
     final Span cacheSettingsSpan = new Span("Data cache settings");
@@ -63,7 +62,7 @@ public class SettingsView extends VerticalLayout
     final NativeLabel progressBarLabel = new NativeLabel("Cache is being generated.");
     final Button createDataCacheButton = new Button("Create cache");
 
-    public SettingsView(CrmService service)
+    public SettingsView(MainService service)
     {
         this.service = service;
         addClassName("settings-view");

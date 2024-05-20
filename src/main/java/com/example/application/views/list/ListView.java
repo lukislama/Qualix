@@ -1,7 +1,7 @@
 package com.example.application.views.list;
 
 import com.example.application.data.entity.Contact;
-import com.example.application.data.service.CrmService;
+import com.example.application.data.service.MainService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.button.Button;
@@ -23,9 +23,9 @@ public class ListView extends VerticalLayout
     final Grid<Contact> contactGrid = new Grid<>(Contact.class);
     final TextField filterText = new TextField();
     ContactForm contactForm;
-    final CrmService service;
+    final MainService service;
 
-    public ListView(CrmService service)
+    public ListView(MainService service)
     {
         this.service = service;
         addClassName("list-view");

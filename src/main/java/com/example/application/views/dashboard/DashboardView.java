@@ -1,7 +1,7 @@
 package com.example.application.views.dashboard;
 
 import com.example.application.data.entity.Data;
-import com.example.application.data.service.CrmService;
+import com.example.application.data.service.MainService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.grid.Grid;
@@ -25,9 +25,9 @@ public class DashboardView extends VerticalLayout
     final Grid<Data> dataGrid = new Grid<>(Data.class);
     final TextField filterText = new TextField();
     InnerListView innerListView;
-    private final CrmService service;
+    private final MainService service;
 
-    public DashboardView(CrmService service)
+    public DashboardView(MainService service)
     {
         this.service = service;
         addClassName("dashboard-view");
