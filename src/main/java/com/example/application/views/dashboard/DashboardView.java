@@ -18,7 +18,7 @@ import jakarta.annotation.security.PermitAll;
 @org.springframework.stereotype.Component
 @Scope("prototype")
 @Route(value = "", layout = MainLayout.class)
-@PageTitle("Dashboard | LAMPView")
+@PageTitle("Dashboard | Qualix")
 @PermitAll
 public class DashboardView extends VerticalLayout
 {

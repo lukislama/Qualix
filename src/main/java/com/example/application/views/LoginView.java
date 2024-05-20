@@ -8,7 +8,7 @@ import com.vaadin.flow.router.*;
 import com.vaadin.flow.server.auth.AnonymousAllowed;
 
 @Route("login")
-@PageTitle("Login | LAMPView")
+@PageTitle("Login | Qualix")
 @AnonymousAllowed
 public class LoginView extends VerticalLayout implements BeforeEnterObserver
 {
@@ -24,7 +24,7 @@ public class LoginView extends VerticalLayout implements BeforeEnterObserver
         loginForm.setAction("login");
         loginForm.addForgotPasswordListener(e -> Notification.show("To reset a password contact the system administrator."));
 
-        add(new H1("LAMPView"), loginForm);
+        add(new H1("Qualix"), loginForm);
     }
 
     @Override

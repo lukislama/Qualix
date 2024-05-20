@@ -39,7 +39,7 @@ import java.time.temporal.ChronoUnit;
 
 import static com.example.application.data.service.Utilities.createAndRunProcess;
 
-@PageTitle("Visualizations | LAMPView")
+@PageTitle("Visualizations | Qualix")
 @Route(value = "visualizations", layout = MainLayout.class)
 @PermitAll
 public class VisualizationsView extends VerticalLayout

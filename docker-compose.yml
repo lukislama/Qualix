@@ -1,7 +1,7 @@
 services:
   app:
     build: .
-    container_name: lampview
+    container_name: qualix
     depends_on:
       - db
     ports:
@@ -14,7 +14,7 @@ services:
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
   db:
     image: 'postgres:16.1'
-    container_name: lampview-postgres
+    container_name: qualix-postgres
     environment:
       - POSTGRES_USER=compose-postgres
       - POSTGRES_PASSWORD=compose-postgres

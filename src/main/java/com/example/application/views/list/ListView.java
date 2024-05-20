@@ -15,7 +15,7 @@ import com.vaadin.flow.router.Route;
 
 import jakarta.annotation.security.RolesAllowed;
 
-@PageTitle("Participant list | LAMPView")
+@PageTitle("Participant list | Qualix")
 @Route(value = "list", layout = MainLayout.class)
 @RolesAllowed("ADMIN")
 public class ListView extends VerticalLayout

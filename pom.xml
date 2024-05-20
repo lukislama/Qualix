@@ -4,8 +4,8 @@
     <modelVersion>4.0.0</modelVersion>
     <!-- Project from https://start.vaadin.com/project/76a18f70-7a3c-4dda-ae2a-033e092bf5bd -->
     <groupId>com.example.application</groupId>
-    <artifactId>LAMPView</artifactId>
-    <name>LAMPView</name>
+    <artifactId>Qualix</artifactId>
+    <name>Qualix</name>
     <version>0.9</version>
     <packaging>jar</packaging>
 

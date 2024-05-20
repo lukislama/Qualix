@@ -21,8 +21,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableConfigurationProperties(AppConfig.class)
 @Theme(value = "flowcrmtutorial")
 @PWA(
-        name = "LAMPView",
-        shortName = "LAMPView",
+        name = "Qualix",
+        shortName = "Qualix",
         offlinePath="offline.html",
         offlineResources = { "./images/offline.png"}
 )

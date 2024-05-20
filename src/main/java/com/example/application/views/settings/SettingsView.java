@@ -33,7 +33,7 @@ import org.springframework.scheduling.annotation.Async;
 
 import static com.example.application.data.service.Utilities.createAndRunProcess;
 
-@PageTitle("Settings | LAMPVIew")
+@PageTitle("Settings | Qualix")
 @Route(value = "settings", layout = MainLayout.class)
 @RolesAllowed("ADMIN")
 public class SettingsView extends VerticalLayout

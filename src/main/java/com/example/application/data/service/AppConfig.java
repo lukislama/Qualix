@@ -2,10 +2,9 @@ package com.example.application.data.service;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-import java.util.ArrayList;
 import java.util.List;
 
-@ConfigurationProperties(prefix = "lampview")
+@ConfigurationProperties(prefix = "qualix")
 public class AppConfig
 {
     public enum dataCacheStatus
