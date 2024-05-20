@@ -16,7 +16,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
-import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 
 import static com.example.application.data.service.Utilities.createAndRunProcess;
@@ -60,9 +59,6 @@ public class MainService
                     "You email has been set to receive notifications from the Qualix application.\n" +
                             "If you think this is a mistake, please contact the study administrators at " + appConfig.getGoogleEmailAddress());
         }
-
-        //generateData();
-        //generateTableForEmail();
     }
 
     private void saveStatuses()
@@ -79,114 +75,6 @@ public class MainService
         for (Status status : statuses)
         {
             this.saveStatus(status);
-        }
-    }
-
-    private void generateData()
-    {
-        //Data generation
-        String[] trafficLight = new String[]{"🟢", "🟡", "🔴"};
-        List<Data> dataList = new ArrayList<>();
-
-        Data data;
-        for (int i = 0; i < 5; i++)
-        {
-            data = new Data();
-            data.setGPS(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
-            data.setAccelerometer(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
-            data.setDisplay(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
-            data.setDeviceMotion(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
-
-            dataList.add(data);
-        }
-
-        //Contact + status generation
-        List<Status> statuses = new ArrayList<>();
-        statuses.add(new Status());
-        statuses.add(new Status());
-        statuses.add(new Status());
-
-        statuses.get(0).setName("In study");
-        statuses.get(1).setName("Finished");
-        statuses.get(2).setName("Dropped out");
-
-        for (Status status : statuses)
-        {
-            this.saveStatus(status);
-        }
-
-        List<String> firstNames = new ArrayList<>();
-        firstNames.add("John");
-        firstNames.add("Bob");
-        firstNames.add("Alex");
-
-        List<String> lastNames = new ArrayList<>();
-        lastNames.add("Snow");
-        lastNames.add("Jobs");
-        lastNames.add("Fitzgerald");
-
-        int randomNum;
-        String studyId, firstName, lastName, email, phoneNum;
-        Status status;
-        Contact contact;
-        for (int i = 0; i < 5; i++)
-        {
-            studyId = "U" + ((long) Math.floor(Math.random() * 9_000_000_000L) + 1_000_000_000L);
-
-            randomNum = ThreadLocalRandom.current().nextInt(0, 2 + 1);
-            firstName = firstNames.get(randomNum);
-
-            randomNum = ThreadLocalRandom.current().nextInt(0, 2 + 1);
-            lastName = lastNames.get(randomNum);
-
-            email = firstName.toLowerCase() + "." + lastName.toLowerCase() + "@email.com";
-
-            phoneNum = String.valueOf((long) Math.floor(Math.random() * 900_000_000L) + 100_000_000L);
-
-            randomNum = ThreadLocalRandom.current().nextInt(0, 2 + 1);
-            status = statuses.get(randomNum);
-
-            contact = new Contact();
-            contact.setStudyId(studyId);
-            contact.setFirstName(firstName);
-            contact.setLastName(lastName);
-            contact.setEmail(email);
-            contact.setPhoneNum(phoneNum);
-            contact.setStatus(status);
-
-            data = dataList.get(i);
-            data.setParticipantStudyId(studyId);
-            data.setContact(contact);
-
-            this.saveData(data);
-        }
-
-        //DataPoints generation
-        DataPoint dataPoint;
-        LocalDate date;
-        List<Contact> contactList = contactRepository.findAll();
-        dataList = dataRepository.findAll();
-        for (int i = 0; i < 5; i++)
-        {
-            contact = contactList.get(i);
-            data = dataList.get(i);
-
-            date = LocalDate.of(2023, 3, 9);
-            for (int j = 0; j < 10; j++)
-            {
-                dataPoint = new DataPoint();
-                dataPoint.setParticipantStudyId(contact.getStudyId());
-                dataPoint.setDate(date.toString());
-                dataPoint.setGPS(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
-                dataPoint.setAccelerometer(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
-                dataPoint.setDisplay(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
-                dataPoint.setDeviceMotion(trafficLight[ThreadLocalRandom.current().nextInt(0, 2 + 1)]);
-                dataPoint.setData(data);
-
-                date = date.minusDays(1);
-
-                this.saveDataPoint(dataPoint);
-            }
         }
     }
 
@@ -450,18 +338,6 @@ public class MainService
             tableValues[i][2] = data.getDisplay();
             tableValues[i][3] = data.getDeviceMotion();
         }
-
-        /*returnString += "ID\tGPS\tAccelerometer\tDisplay\tDevice motion\n";
-        for (int i = 0; i < contactList.size(); i++)
-        {
-            returnString += contactList.get(i).getStudyId() + "\t"
-                    + tableValues[i][0] + "\t"
-                    + tableValues[i][1] + "\t"
-                    + tableValues[i][2] + "\t"
-                    + tableValues[i][3] + "\n";
-        }
-
-        return returnString;*/
 
         returnString = new Utilities.TableBuilder()
                 .addHeaders("GPS", "Accelerometer", "Display", "Device motion")

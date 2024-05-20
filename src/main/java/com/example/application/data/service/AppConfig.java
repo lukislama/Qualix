@@ -21,7 +21,7 @@ public class AppConfig
     private String recipientEmailAddress, googleEmailAddress, googleAppPassword;
     private boolean serverSet, emailSet;
     private dataCacheStatus status = dataCacheStatus.NOT_BUILT;
-    private List<String> visualizationTypes = List.of("Accelerometer", "Data_quality");
+    private final List<String> visualizationTypes = List.of("Accelerometer", "Data_quality");
 
     public String getLampServerAddress()
     {

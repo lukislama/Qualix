@@ -310,11 +310,6 @@ public class VisualizationsView extends VerticalLayout
             }
             else
             {
-//                System.out.println("Calling process python3 with args: download_and_visualize_data_from_cache.py, " +
-//                        patientId.getValue().getStudyId() + ", " +
-//                        visualizationType.getValue() + ", " +
-//                        formatDayString(radioButtonGroup.getValue()));
-
                 processReturn = createAndRunProcess("python3",
                         "download_and_visualize_data_from_cache.py",
                         patientId.getValue().getStudyId(),
