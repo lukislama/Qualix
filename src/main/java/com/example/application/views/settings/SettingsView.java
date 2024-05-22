@@ -225,6 +225,7 @@ public class SettingsView extends VerticalLayout
         }
         else
         {
+            System.out.println("An error occurred while building the data cache: " + processReturn.getResults());
             service.setDataCacheStatus("ERROR");
         }
 
@@ -389,6 +390,8 @@ public class SettingsView extends VerticalLayout
 
     private boolean testConnection()
     {
+        System.out.println("Testing connection!");
+
         if (service.getLampServerAddress() == null ||
                 service.getLampAccessKey() == null ||
                 service.getLampSecretKey() == null ||
@@ -411,6 +414,8 @@ public class SettingsView extends VerticalLayout
         {
             Notification successNotification = Notification.show("Connection successful.");
             successNotification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+
+            System.out.println("Test successful!");
 
             return true;
         }

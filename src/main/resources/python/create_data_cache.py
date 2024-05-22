@@ -7,7 +7,7 @@ LAMP.connect(sys.argv[1], sys.argv[2], sys.argv[3])
 
 participants = LAMP.Participant.all_by_study(sys.argv[4])
 
-TIMESTAMP_NOW = datetime.now()
+TIMESTAMP_NOW = datetime.now()  # today
 
 # Accelerometer
 
@@ -15,7 +15,8 @@ TIMESTAMP_DAY = datetime.strptime(TIMESTAMP_NOW.strftime("%Y-%m-%d 00:00:00.0000
 TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=1)
 
 print("Accelerometer")
-for i in range(7):
+data_range = 7
+for i in range(data_range):
     for participant in participants['data']:
         t_stamp = TIMESTAMP_DAY
         data = []
@@ -69,7 +70,7 @@ TIMESTAMP_DAY = datetime.strptime(TIMESTAMP_NOW.strftime("%Y-%m-%d 00:00:00.0000
 TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=1)
 
 print("GPS")
-for i in range(7):
+for i in range(data_range):
     for participant in participants['data']:
         t_stamp = TIMESTAMP_DAY
         data = []
@@ -124,7 +125,7 @@ TIMESTAMP_DAY = datetime.strptime(TIMESTAMP_NOW.strftime("%Y-%m-%d 00:00:00.0000
 TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=1)
 
 print("Device state")
-for i in range(7):
+for i in range(data_range):
     for participant in participants['data']:
         t_stamp = TIMESTAMP_DAY
         data = []
@@ -176,7 +177,7 @@ TIMESTAMP_DAY = datetime.strptime(TIMESTAMP_NOW.strftime("%Y-%m-%d 00:00:00.0000
 TIMESTAMP_LIMIT = TIMESTAMP_DAY - timedelta(days=1)
 
 print("Telephony")
-for i in range(7):
+for i in range(data_range):
     for participant in participants['data']:
         t_stamp = TIMESTAMP_DAY
         data = []
