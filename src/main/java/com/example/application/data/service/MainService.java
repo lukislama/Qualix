@@ -150,7 +150,7 @@ public class MainService
         }
     }
 
-    @Scheduled(fixedDelay = 3600000)
+    @Scheduled(cron = "0 0 7 * * *")
     private void getDataQualityForPreviousDay()
     {
         if (appConfig.isServerSet())
